@@ -4,6 +4,9 @@
 		"useDefineForClassFields": true,
 		"module": "ESNext",
 		"lib": ["ES2020", "DOM", "DOM.Iterable"],
+		"declaration": true, // 生成声明文件
+		// "emitDeclarationOnly": true, // 只生成声明文件
+		"outDir": "dist/types", // 声明文件输出目录
 		"skipLibCheck": true,
 
 		/* Bundler mode */
@@ -19,6 +22,6 @@
 		"noUnusedParameters": true,
 		"noFallthroughCasesInSwitch": true
 	},
-	"include": ["src/**/*", "/types/auto-imports.d.ts", "types/vite-env.d.ts"]
+	"include": ["src/**/*", "lib/**/*", "types/auto-imports.d.ts", "types/vite-env.d.ts"]
 }
 
