@@ -1,6 +1,7 @@
 <template>
 	<Cpn v-model="data" :columns="columns" ref="epFormRef">
 		<!-- <template v-slot:label_3-error-item="{ error }"> 12312 {{ error }} </template> -->
+		<!-- <template v-slot:label_3-label-item="{ label }"> 12312 {{ label.label }} </template> -->
 	</Cpn>
 </template>
 

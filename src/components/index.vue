@@ -18,23 +18,34 @@
 									<template v-if="item.errorRender">
 										<component :is="_renderFn(item.errorRender({ errorInfo }))" />
 									</template>
-									<!-- 其次error插槽 -->
 									<template v-else>
+										<!-- 其次error插槽 -->
 										<template v-if="errorRuleCustomList.includes(item.prop as string)">
-											<slot :name="`${item.prop as string}-error-item`" :error="_renderFormItemSlot(errorInfo)" />
+											<slot :name="`${item.prop as string}-error-item`" :error="_returnErrorInfo(errorInfo)" />
 										</template>
-										<!-- 最后是error信息 -->
 										<template v-else>
+											<!-- 最后是error信息 -->
 											{{ errorInfo.error }}
 										</template>
 									</template>
 								</div>
 							</template>
 
+							<!-- form item label插槽 -->
 							<template #label="labelInfo">
-								{{ labelInfo }}
+								<!-- 优先自定义label渲染 -->
 								<template v-if="item.labelRender">
 									<component :is="_renderFn(item.labelRender({ labelInfo }))" />
+								</template>
+								<template v-else>
+									<!-- 其次slot显示 -->
+									<template v-if="labelCustomList.includes(item.prop as string)">
+										<slot :name="`${item.prop as string}-label-item`" :label="_returnLabelInfo(labelInfo)" />
+									</template>
+									<template v-else>
+										<!-- 最后默认显示label -->
+										{{ labelInfo.label }}
+									</template>
 								</template>
 							</template>
 
@@ -76,7 +87,8 @@ import {
 	EpFormProps,
 	EpFormDefaultExpose,
 	ReturnNodeType,
-	ErrorMsg
+	ErrorMsg,
+	LabelMsg
 } from './type'
 import { createTextVNode, h, UnwrapRef } from 'vue'
 
@@ -208,6 +220,18 @@ const errorRuleCustomList = computed(() => {
 })
 
 /**
+ * 计算是否有自定义formItem error插槽
+ */
+const labelCustomList = computed(() => {
+	return columnsList.value.reduce<string[]>((_merge, { prop }) => {
+		if (slots[`${prop as string}-label-item`]) {
+			_merge.push(prop as string)
+		}
+		return _merge
+	}, [])
+})
+
+/**
  * 自定义渲染slot转换函数
  * @param renderInfo 渲染组件信息
  */
@@ -219,7 +243,8 @@ const _renderFn = (renderInfo: ReturnNodeType) => {
 	}
 }
 
-const _renderFormItemSlot = (info: ErrorMsg) => info
+const _returnErrorInfo = (info: ErrorMsg) => info
+const _returnLabelInfo = (info: LabelMsg) => info
 
 defineExpose({
 	formRef,

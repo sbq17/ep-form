@@ -28,6 +28,8 @@ export declare type ReturnNodeType = string | VNode
  */
 export declare type ErrorMsg = { key: number; error: string }
 
+export declare type LabelMsg = { label: string }
+
 /**
  * 自定义formItem类型
  */
@@ -144,3 +146,5 @@ export declare type EpFormDefaultExpose = Pick<
 	FormContext,
 	'validate' | 'validateField' | 'resetFields' | 'scrollToField' | 'clearValidate' | 'fields '
 >
+
+export declare type PickFormItemSlot<Type extends 'Error' | 'Label'> = Type extends 'Error' ? ErrorMsg : LabelMsg
