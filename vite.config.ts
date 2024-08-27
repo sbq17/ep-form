@@ -1,6 +1,7 @@
 import { fileURLToPath, URL } from 'node:url'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import vueDevTools from 'vite-plugin-vue-devtools'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
@@ -9,6 +10,7 @@ import dts from 'vite-plugin-dts'
 export default defineConfig({
 	plugins: [
 		vue(),
+		vueDevTools(),
 		dts({
 			// 配置选项
 			outDir: 'dist/types', // 指定输出类型文件的目录
