@@ -146,9 +146,3 @@ export declare type EpFormDefaultExpose = Pick<
 	FormContext,
 	'validate' | 'validateField' | 'resetFields' | 'scrollToField' | 'clearValidate' | 'fields '
 >
-
-export declare type PickFormItemSlot<Type extends 'Error' | 'Label'> = Type extends 'Error' ? ErrorMsg : LabelMsg
-
-export declare type RenderFormItemSlotParams<Type extends 'Error' | 'Label'> = (
-	info: ErrorMsg | LabelMsg
-) => Type extends 'Error' ? ErrorMsg : LabelMsg
