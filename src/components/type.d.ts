@@ -148,3 +148,7 @@ export declare type EpFormDefaultExpose = Pick<
 >
 
 export declare type PickFormItemSlot<Type extends 'Error' | 'Label'> = Type extends 'Error' ? ErrorMsg : LabelMsg
+
+export declare type RenderFormItemSlotParams<Type extends 'Error' | 'Label'> = (
+	info: ErrorMsg | LabelMsg
+) => Type extends 'Error' ? ErrorMsg : LabelMsg

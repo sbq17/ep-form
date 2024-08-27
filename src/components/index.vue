@@ -75,22 +75,12 @@ import 'element-plus/dist/index.css'
 // 导入中文 默认中文显示
 import zhCn from 'element-plus/es/locale/lang/zh-cn.mjs'
 // configProps 配置
-import { ColProps, ConfigProviderProps, ElCol } from 'element-plus'
+import { ConfigProviderProps, ElCol } from 'element-plus'
 // 类型
-import {
-	Props,
-	EmitType,
-	DefaultDataType,
-	ShowColumnItem,
-	PickFormItemExpose,
-	FormItemRef,
-	EpFormProps,
-	EpFormDefaultExpose,
-	ReturnNodeType,
-	ErrorMsg,
-	LabelMsg
-} from './type'
-import { createTextVNode, h, UnwrapRef } from 'vue'
+import { Props, EmitType, DefaultDataType, PickFormItemExpose, FormItemRef, EpFormProps } from './type'
+import { UnwrapRef } from 'vue'
+import { useShowColumns } from './hook/useColumns'
+import { useFormConfig } from './hook/useFormConfig'
 
 console.log(12312, 'init')
 
@@ -103,7 +93,13 @@ const props = withDefaults(defineProps<Props<DataType>>(), {
 	colProps: () => ({})
 })
 
+// emits事件
 const emits = defineEmits<EmitType>()
+
+/**
+ * 插槽配置
+ */
+const slots = useSlots()
 
 // 默认的configProvider配置
 const defaultConfigProvider: Partial<ConfigProviderProps> = {
@@ -114,46 +110,19 @@ const defaultConfigProvider: Partial<ConfigProviderProps> = {
 // 合并configProvider配置
 const configProvider = computed(() => ({ ...defaultConfigProvider, ...props.configProviderProps }))
 
-/**
- * 显示表单项
- */
-const columnsList = computed(() => {
-	// 显示表单项
-	const _c = props.columns.filter(({ show }) => (show === undefined ? true : show))
+const { columnsList } = useShowColumns<DataType>(props)
 
-	// 需要排序显示的项
-	const _order = _c.filter(({ order }) => order !== void 0)
-	// 不需要排序显示的项
-	const _not_order = _c.filter(({ order }) => order === void 0)
-
-	const showList = _order.sort((a, b) => b.order! - a.order!).concat(_not_order)
-
-	showList.forEach((item) => {
-		let _col = item.col
-
-		if (typeof _col === 'number') {
-			item.col = { ...props.colProps, span: _col }
-		} else if (typeof _col === 'string') {
-			item.col = { ...props.colProps, span: Number(_col) }
-		} else {
-			item.col = { ...props.colProps, ...(_col as Partial<ColProps>) }
-		}
-
-		_col = item.col
-		item.col = { ...item.col, span: _col.span || 24 }
-	})
-
-	return showList as ShowColumnItem<DataType>[]
-})
-
-/**
- * 提取formItem属性配置
- * @param item 显示表单项
- */
-const _itemProps = (item: ShowColumnItem<DataType>): Omit<ShowColumnItem<DataType>, 'col'> => {
-	const { col, labelRender, errorRender, ...rest } = item
-	return rest
-}
+const {
+	formItemRef,
+	formRef,
+	errorRuleCustomList,
+	labelCustomList,
+	_onDynamicRef,
+	_renderFn,
+	_returnErrorInfo,
+	_returnLabelInfo,
+	_itemProps
+} = useFormConfig<DataType>(props, columnsList, slots)
 
 const formData = ref<Partial<DataType>>({})
 
@@ -176,75 +145,6 @@ watch(
 onMounted(() => {
 	formData.value = props.modelValue || ({} as UnwrapRef<Partial<DataType>>)
 })
-
-/**
- * 表单ref
- */
-const formRef = ref<EpFormDefaultExpose>()
-
-/**
- * 表单项配置ref
- */
-const formItemRef = ref<Record<string, PickFormItemExpose>>({})
-
-/**
- * 设置动态formItem实例ref
- * @param v formItem方法实例
- * @param prop columns配置属性
- */
-const _onDynamicRef = (v: PickFormItemExpose, prop: ShowColumnItem<DataType>['prop']) => {
-	formItemRef.value[`${prop as string}FormItemRef`] = v
-}
-
-/**
- * 插槽配置
- */
-const slots = useSlots()
-
-/**
- * 计算是否有自定义formItem error插槽
- */
-const errorRuleCustomList = computed(() => {
-	const formRules = props.formProps.rules || {}
-	return columnsList.value.reduce<string[]>((_merge, { required, rules, prop }) => {
-		const _rule = formRules[prop as string]
-
-		if (
-			slots[`${prop as string}-error-item`] &&
-			(required === true || (rules && rules.length) || (_rule && _rule.length))
-		) {
-			_merge.push(prop as string)
-		}
-		return _merge
-	}, [])
-})
-
-/**
- * 计算是否有自定义formItem error插槽
- */
-const labelCustomList = computed(() => {
-	return columnsList.value.reduce<string[]>((_merge, { prop }) => {
-		if (slots[`${prop as string}-label-item`]) {
-			_merge.push(prop as string)
-		}
-		return _merge
-	}, [])
-})
-
-/**
- * 自定义渲染slot转换函数
- * @param renderInfo 渲染组件信息
- */
-const _renderFn = (renderInfo: ReturnNodeType) => {
-	if (typeof renderInfo === 'object') {
-		return h(renderInfo)
-	} else {
-		return createTextVNode(renderInfo)
-	}
-}
-
-const _returnErrorInfo = (info: ErrorMsg) => info
-const _returnLabelInfo = (info: LabelMsg) => info
 
 defineExpose({
 	formRef,
