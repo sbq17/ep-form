@@ -4,16 +4,44 @@
 			<el-form class="ep_form" v-bind="formProps" :model="formData" ref="formRef">
 				<el-row v-bind="rowProps" class="ep_row">
 					<el-col v-for="item in columnsList" :key="item.prop" v-bind="item.col">
+						<!-- 渲染 form item -->
 						<el-form-item
 							v-bind="_itemProps(item)"
 							class="ep_form_item_wrapper"
-							:ref="(refInstacnce: PickFormItemExpose) => _onDynamicRef(refInstacnce, item.prop as string)"
+							:ref="(refInstacnce: PickFormItemExpose) => _onDynamicRef(refInstacnce, item.prop)"
 						>
-							<!-- <template #label> 12312</template>
-							<template #error="dwad">
-								{{ dwad }}
-							</template> -->
-							<el-input v-model="formData[item.prop]" />
+							<!-- form item error 插槽 -->
+							<!-- 重写error插槽是为了更好的设置样式 -->
+							<template #error="errorInfo">
+								<div class="ep_error_msg">
+									<!-- 优先自定义渲染的 -->
+									<template v-if="item.errorRender">
+										<component :is="_renderFn(item.errorRender({ errorInfo }))" />
+									</template>
+									<!-- 其次error插槽 -->
+									<template v-else>
+										<template v-if="errorRuleCustomList.includes(item.prop as string)">
+											<slot :name="`${item.prop as string}-error-item`" :error="_renderFormItemSlot(errorInfo)" />
+										</template>
+										<!-- 最后是error信息 -->
+										<template v-else>
+											{{ errorInfo.error }}
+										</template>
+									</template>
+								</div>
+							</template>
+
+							<template #label="labelInfo">
+								{{ labelInfo }}
+								<template v-if="item.labelRender">
+									<component :is="_renderFn(item.labelRender({ labelInfo }))" />
+								</template>
+							</template>
+
+							<!-- 组件渲染区域 -->
+							<div class="ep_component_wrapper">
+								<el-input v-model="formData[item.prop]" />
+							</div>
 						</el-form-item>
 					</el-col>
 				</el-row>
@@ -40,15 +68,17 @@ import { ColProps, ConfigProviderProps, ElCol } from 'element-plus'
 // 类型
 import {
 	Props,
+	EmitType,
 	DefaultDataType,
 	ShowColumnItem,
 	PickFormItemExpose,
 	FormItemRef,
 	EpFormProps,
 	EpFormDefaultExpose,
-	EmitType
+	ReturnNodeType,
+	ErrorMsg
 } from './type'
-import { UnwrapRef } from 'vue'
+import { createTextVNode, h, UnwrapRef } from 'vue'
 
 console.log(12312, 'init')
 
@@ -109,7 +139,7 @@ const columnsList = computed(() => {
  * @param item 显示表单项
  */
 const _itemProps = (item: ShowColumnItem<DataType>): Omit<ShowColumnItem<DataType>, 'col'> => {
-	const { col, ...rest } = item
+	const { col, labelRender, errorRender, ...rest } = item
 	return rest
 }
 
@@ -150,9 +180,46 @@ const formItemRef = ref<Record<string, PickFormItemExpose>>({})
  * @param v formItem方法实例
  * @param prop columns配置属性
  */
-const _onDynamicRef = (v: PickFormItemExpose, prop: ShowColumnItem['prop']) => {
-	formItemRef.value[`${prop}FormItemRef`] = v
+const _onDynamicRef = (v: PickFormItemExpose, prop: ShowColumnItem<DataType>['prop']) => {
+	formItemRef.value[`${prop as string}FormItemRef`] = v
 }
+
+/**
+ * 插槽配置
+ */
+const slots = useSlots()
+
+/**
+ * 计算是否有自定义formItem error插槽
+ */
+const errorRuleCustomList = computed(() => {
+	const formRules = props.formProps.rules || {}
+	return columnsList.value.reduce<string[]>((_merge, { required, rules, prop }) => {
+		const _rule = formRules[prop as string]
+
+		if (
+			slots[`${prop as string}-error-item`] &&
+			(required === true || (rules && rules.length) || (_rule && _rule.length))
+		) {
+			_merge.push(prop as string)
+		}
+		return _merge
+	}, [])
+})
+
+/**
+ * 自定义渲染slot转换函数
+ * @param renderInfo 渲染组件信息
+ */
+const _renderFn = (renderInfo: ReturnNodeType) => {
+	if (typeof renderInfo === 'object') {
+		return h(renderInfo)
+	} else {
+		return createTextVNode(renderInfo)
+	}
+}
+
+const _renderFormItemSlot = (info: ErrorMsg) => info
 
 defineExpose({
 	formRef,
@@ -170,5 +237,18 @@ defineExpose({
 
 .ep_form {
 	@apply w-full;
+}
+
+.ep_form_item_wrapper {
+	@apply mb-2;
+}
+
+.ep_component_wrapper {
+	@apply w-full;
+}
+
+/* 错误信息 */
+.ep_error_msg {
+	@apply text-red-400 w-full;
 }
 </style>

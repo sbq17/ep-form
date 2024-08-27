@@ -5,16 +5,33 @@ import {
 	FormItemProps,
 	FormItemContext,
 	FormProps,
-	FormContext
+	FormContext,
+	FormItemRule
 } from 'element-plus'
 import { CSSProperties, UnwrapRef, VNode } from 'vue'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 declare type DefaultDataType = Record<string, any>
 
+/**
+ * 自定义样式名称
+ */
 declare type CustomCssType = { class: string | string[]; style: CSSProperties }
 
-export declare type CustomFormItem<DataType = DefaultDataType> = {
+/**
+ * 返回的节点样式
+ */
+export declare type ReturnNodeType = string | VNode
+
+/**
+ * 错误消息类型
+ */
+export declare type ErrorMsg = { key: number; error: string }
+
+/**
+ * 自定义formItem类型
+ */
+export declare type CustomFormItem<DataType extends DefaultDataType = DefaultDataType> = {
 	/**
 	 * 文本
 	 */
@@ -23,6 +40,7 @@ export declare type CustomFormItem<DataType = DefaultDataType> = {
 	 * 字段
 	 */
 	prop: keyof UnwrapRef<Partial<DataType>>
+	// prop: keyof Partial<DataType>
 	/**
 	 * 是否显示
 	 */
@@ -39,13 +57,14 @@ export declare type CustomFormItem<DataType = DefaultDataType> = {
 	 * formItem label渲染插槽
 	 * @returns
 	 */
-	labelRender?: () => string | VNode[] | (string | VNode)[]
+	labelRender?: ({ labelInfo }: { labelInfo: { label: string } }) => ReturnNodeType
 	/**
 	 * formItem error插槽
 	 * @returns
 	 */
-	errorRender?: () => string | VNode[] | (string | VNode)[]
-} & Partial<Omit<FormItemProps, 'label' | 'prop'> & CustomCssType>
+	errorRender?: ({ errorInfo }: { errorInfo: ErrorMsg }) => ReturnNodeType
+	rules?: FormItemRule[]
+} & Partial<Omit<FormItemProps, 'label' | 'prop' | 'rules'> & CustomCssType>
 
 /**
  * 显示columns属性
@@ -57,7 +76,8 @@ export declare type ShowColumnItem<DataType = DefaultDataType> = Omit<CustomForm
 /**
  * elForm属性props
  */
-export declare type EpFormProps = Omit<FormProps, 'model'> & CustomCssType
+export declare type EpFormProps = Omit<FormProps, 'model' | 'rules'> &
+	CustomCssType & { rules?: Record<string, FormItemRule[]> }
 
 /**
  * 组件接收props
@@ -91,7 +111,8 @@ export declare type Props<DataType = DefaultDataType> = {
 }
 
 export declare type EmitType = {
-	'update:modelValue': [id: any]
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	'update:modelValue': [formData: any]
 }
 
 /**
