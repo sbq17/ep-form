@@ -6,7 +6,12 @@ import {
 	FormItemContext,
 	FormProps,
 	FormContext,
-	FormItemRule
+	FormItemRule,
+	InputProps,
+	ISelectProps,
+	DatePickerProps,
+	TimePickerDefaultProps,
+	InputNumberProps
 } from 'element-plus'
 import { CSSProperties, UnwrapRef, VNode } from 'vue'
 
@@ -28,12 +33,28 @@ export declare type ReturnNodeType = string | VNode
  */
 export declare type ErrorMsg = { key: number; error: string }
 
+/**
+ * form item label属性
+ */
 export declare type LabelMsg = { label: string }
 
 /**
- * 自定义formItem类型
+ * 渲染组件类型
  */
-export declare type CustomFormItem<DataType extends DefaultDataType = DefaultDataType> = {
+export declare type FormItemRenderComponentType =
+	| 'input'
+	| 'select'
+	| 'date'
+	| 'time'
+	| 'number'
+	| 'text'
+	| 'slot'
+	| 'format'
+
+/**
+ * 默认的columns配置
+ */
+export declare type DefaultCustomColumns<DataType extends DefaultDataType = DefaultDataType> = {
 	/**
 	 * 文本
 	 */
@@ -65,8 +86,35 @@ export declare type CustomFormItem<DataType extends DefaultDataType = DefaultDat
 	 * @returns
 	 */
 	errorRender?: ({ errorInfo }: { errorInfo: ErrorMsg }) => ReturnNodeType
+	/**
+	 * 规则重新定义
+	 */
 	rules?: FormItemRule[]
+	/**
+	 *
+	 */
+	renderType: FormItemRenderComponentType
 } & Partial<Omit<FormItemProps, 'label' | 'prop' | 'rules'> & CustomCssType>
+
+/**
+ * 自定义formItem类型
+ */
+export declare type CustomFormItem<DataType = DefaultDataType> =
+	DefaultCustomColumns<DataType> extends { renderType: infer Type }
+		? Type extends 'input'
+			? InputItemProps<DataType> & FormatProps<InputItemProps<DataType>>
+			: Type extends 'select'
+				? SelectItemProps<DataType> & FormatProps<SelectItemProps<DataType>>
+				: Type extends 'date'
+					? DateItemProps<DataType> & FormatProps<DateItemProps<DataType>>
+					: Type extends 'time'
+						? TimeItemProps<DataType> & FormatProps<TimeItemProps<DataType>>
+						: Type extends 'number'
+							? NumberItemProps<DataType> & FormatProps<NumberItemProps<DataType>>
+							: Type extends 'text'
+								? TextItemProps<DataType> & FormatProps<TextItemProps<DataType>>
+								: FormatItemProps<DataType> & FormatProps<FormatItemProps<DataType>>
+		: DefaultCustomColumns<DataType>
 
 /**
  * 显示columns属性
@@ -112,6 +160,9 @@ export declare type Props<DataType = DefaultDataType> = {
 	'update:modelValue'?: (data: DataType) => void
 }
 
+/**
+ * emit事件
+ */
 export declare type EmitType = {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	'update:modelValue': [formData: any]
@@ -146,3 +197,84 @@ export declare type EpFormDefaultExpose = Pick<
 	FormContext,
 	'validate' | 'validateField' | 'resetFields' | 'scrollToField' | 'clearValidate' | 'fields '
 >
+
+/**
+ * input column配置
+ */
+export declare type InputItemProps<DataType = DefaultDataType> = DefaultCustomColumns<DataType> & {
+	renderType: 'input'
+} & {
+	inputProps?: Partial<Omit<InputProps, 'modelValue' | 'update:modelValue'> & CustomCssType>
+}
+
+/**
+ * select column配置
+ */
+export declare type SelectItemProps<DataType = DefaultDataType> = DefaultCustomColumns<DataType> & {
+	renderType: 'select'
+} & {
+	selectProps?: Partial<Omit<ISelectProps, 'modelValue' | 'update:modelValue'> & CustomCssType>
+}
+
+/**
+ * date column配置
+ */
+export declare type DateItemProps<DataType = DefaultDataType> = DefaultCustomColumns<DataType> & {
+	renderType: 'date'
+} & {
+	dateProps?: Partial<Omit<DatePickerProps, 'modelValue' | 'update:modelValue'> & CustomCssType>
+}
+
+/**
+ * time column配置
+ */
+export declare type TimeItemProps<DataType = DefaultDataType> = DefaultCustomColumns<DataType> & {
+	renderType: 'time'
+} & {
+	timeProps?: Partial<Omit<TimePickerDefaultProps, 'modelValue' | 'update:modelValue'> & CustomCssType>
+}
+
+/**
+ * number column配置
+ */
+export declare type NumberItemProps<DataType = DefaultDataType> = DefaultCustomColumns<DataType> & {
+	renderType: 'number'
+} & {
+	numberProps?: Partial<Omit<InputNumberProps, 'modelValue' | 'update:modelValue'> & CustomCssType>
+}
+
+/**
+ * text column配置
+ */
+export declare type TextItemProps<DataType = DefaultDataType> = DefaultCustomColumns<DataType> & {
+	renderType: 'text'
+} & {
+	textProps?: Partial<CustomCssType>
+}
+
+/**
+ * 自定义渲染 column配置
+ */
+export declare type FormatItemProps<DataType = DefaultDataType> = DefaultCustomColumns<DataType> & {
+	renderType: 'slot' | 'format'
+} & {
+	slotProps?: Partial<CustomCssType>
+}
+
+/**
+ * 自定义渲染配置
+ */
+declare type FormatProps<ColumnType> = {
+	/**
+	 * 格式化内容自定义渲染
+	 * @param 表单配置
+	 * @returns
+	 */
+	format?: ({ columns }: { columns: ColumnType }) => ReturnNodeType
+	/**
+	 * 自定义渲染
+	 * @param 表单配置
+	 * @returns
+	 */
+	render?: ({ columns }: { columns: ColumnType }) => ReturnNodeType
+}

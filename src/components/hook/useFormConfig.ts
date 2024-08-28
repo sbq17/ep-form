@@ -141,9 +141,9 @@ export const useFormConfig = <DataType = DefaultDataType>(
 		 * 提取formItem属性配置
 		 * @param item 显示表单项
 		 */
-		_itemProps: (item: ShowColumnItem<DataType>): Omit<ShowColumnItem<DataType>, 'col'> => {
+		_itemProps: (item: ShowColumnItem<DataType>) => {
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
-			const { col, labelRender, errorRender, ...rest } = item
+			const { col, order, show, renderType, format, render, labelRender, errorRender, ...rest } = item
 			return rest
 		}
 	}
