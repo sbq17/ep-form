@@ -1,14 +1,14 @@
 import { createTextVNode, h, SetupContext } from 'vue'
 import {
+	CustomCssType,
 	DefaultDataType,
 	EpFormDefaultExpose,
-	ErrorMsg,
-	LabelMsg,
 	PickFormItemExpose,
 	Props,
 	ReturnNodeType,
 	ShowColumnItem
 } from '../type'
+import { FormItemContext } from 'element-plus'
 
 /**
  * 定义表单配置
@@ -37,8 +37,9 @@ export const useFormConfig = <DataType = DefaultDataType>(
 	 * @param v formItem方法实例
 	 * @param prop columns配置属性
 	 */
-	const _onDynamicRef = (v: PickFormItemExpose, prop: ShowColumnItem<DataType>['prop']) => {
-		formItemRef.value[`${prop as string}FormItemRef`] = v
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	const _onDynamicRef = (v: any, prop: ShowColumnItem<DataType>['prop']) => {
+		formItemRef.value[`${prop as string}FormItemRef`] = v as PickFormItemExpose
 	}
 
 	/**
@@ -83,20 +84,6 @@ export const useFormConfig = <DataType = DefaultDataType>(
 		}
 	}
 
-	/**
-	 * 返回error对象
-	 * @param info error对象
-	 * @returns
-	 */
-	const _returnErrorInfo = (info: ErrorMsg) => info
-
-	/**
-	 * 返回label对象
-	 * @param info label对象
-	 * @returns
-	 */
-	const _returnLabelInfo = (info: LabelMsg) => info
-
 	return {
 		/**
 		 * 表单ref
@@ -126,25 +113,13 @@ export const useFormConfig = <DataType = DefaultDataType>(
 		 */
 		_renderFn,
 		/**
-		 * 返回error对象
-		 * @param info error对象
-		 * @returns
-		 */
-		_returnErrorInfo,
-		/**
-		 * 返回label对象
-		 * @param info label对象
-		 * @returns
-		 */
-		_returnLabelInfo,
-		/**
 		 * 提取formItem属性配置
 		 * @param item 显示表单项
 		 */
-		_itemProps: (item: ShowColumnItem<DataType>) => {
+		_itemProps: (item: ShowColumnItem<DataType>): Partial<FormItemContext> => {
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			const { col, order, show, renderType, format, render, labelRender, errorRender, ...rest } = item
-			return rest
+			return rest as Partial<FormItemContext & CustomCssType>
 		}
 	}
 }

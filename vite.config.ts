@@ -2,24 +2,23 @@ import { fileURLToPath, URL } from 'node:url'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueDevTools from 'vite-plugin-vue-devtools'
+import dts from 'vite-plugin-dts'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
-import dts from 'vite-plugin-dts'
 
 export default defineConfig({
 	plugins: [
 		vue(),
 		vueDevTools(),
 		dts({
-			// 配置选项
-			outDir: 'dist/types', // 指定输出类型文件的目录
-			rollupTypes: true, // 将所有类型合并为一个文件
+			rollupTypes: true, // 合并类型
+			insertTypesEntry: true, // 插入类型入口
 			exclude: ['src/main.ts'] // 排除不需要生成类型的文件
 		}),
 		AutoImport({
 			imports: ['vue'],
-			ignore: ['h'],
+			// ignore: ['h'],
 			resolvers: [ElementPlusResolver()],
 			dts: fileURLToPath(new URL('./types/auto-imports.d.ts', import.meta.url))
 		}),
@@ -31,7 +30,7 @@ export default defineConfig({
 	build: {
 		lib: {
 			entry: './lib/main.ts',
-			name: 'element-plus-form',
+			name: 'ep_form',
 			fileName: 'index',
 			formats: ['es', 'umd']
 		},

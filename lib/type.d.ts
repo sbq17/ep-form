@@ -1,4 +1,4 @@
-import {
+import type {
 	ColProps,
 	ConfigProviderProps,
 	RowProps,
@@ -13,15 +13,17 @@ import {
 	TimePickerDefaultProps,
 	InputNumberProps
 } from 'element-plus'
-import { CSSProperties, UnwrapRef, VNode } from 'vue'
+import type { CSSProperties, UnwrapRef, VNode, VNodeRef } from 'vue'
+import type { DateSlot, InputSlot, NumberSlot, SelectSlot } from './slots'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 declare type DefaultDataType = Record<string, any>
+// declare type DefaultDataType = FormProps['model']
 
 /**
  * 自定义样式名称
  */
-declare type CustomCssType = { class: string | string[]; style: CSSProperties }
+export declare type CustomCssType = { class: string | string[]; style: CSSProperties }
 
 /**
  * 返回的节点样式
@@ -31,7 +33,7 @@ export declare type ReturnNodeType = string | VNode
 /**
  * 错误消息类型
  */
-export declare type ErrorMsg = { key: number; error: string }
+export declare type ErrorMsg = { error: string }
 
 /**
  * form item label属性
@@ -45,8 +47,8 @@ export declare type FormItemRenderComponentType =
 	| 'input'
 	| 'select'
 	| 'date'
-	| 'time'
 	| 'number'
+	| 'time'
 	| 'text'
 	| 'slot'
 	| 'format'
@@ -80,7 +82,7 @@ export declare type DefaultCustomColumns<DataType extends DefaultDataType = Defa
 	 * formItem label渲染插槽
 	 * @returns
 	 */
-	labelRender?: ({ labelInfo }: { labelInfo: { label: string } }) => ReturnNodeType
+	labelRender?: ({ labelInfo }: { labelInfo: LabelMsg }) => ReturnNodeType
 	/**
 	 * formItem error插槽
 	 * @returns
@@ -168,13 +170,62 @@ export declare type EmitType = {
 	'update:modelValue': [formData: any]
 }
 
+// declare type SlotEnumType = {
+// 	input: typeof InputSlot
+// 	select: typeof SelectSlot
+// 	date: typeof DateSlot
+// 	number: typeof NumberSlot
+// }
+
+// type SlotTypeTrans<
+// 	DataType extends DefaultDataType = DefaultDataType,
+// 	K extends keyof DataType = keyof DataType,
+// 	RenderType extends keyof SlotEnumType = keyof SlotEnumType
+// > = RenderType extends keyof SlotEnumType
+// 	? {
+// 			[Item in SlotEnumType[RenderType][number] as `${K}-${RenderType}-${Item}`]: (...args: any[]) => string | VNode
+// 		}
+// 	: never
+
+// type SlotTypeTrans<
+// 	SlotType extends readonly string[],
+// 	DataType extends DefaultDataType = DefaultDataType,
+// 	K extends keyof DataType = keyof DataType,
+// 	RenderType extends keyof SlotEnumType = keyof SlotEnumType
+// > = {
+// 	[Item in SlotType[number] as `${K}-${RenderType}-${Item}`]: (...args: any[]) => string | VNode
+// }
+
+// export declare type SlotType<DataType extends DefaultDataType> = SlotTypeTrans<DataType>
+
+export declare type SlotTypeTrans<
+	SlotType extends readonly string[],
+	DataType extends DefaultDataType = DefaultDataType,
+	K extends keyof DataType = keyof DataType
+> = {
+	[SlotName in SlotType[number] as `${K}-render-${SlotName}`]: (...args) => ReturnNodeType
+}
+
+export declare type SlotFormItemType<DataType extends DefaultDataType> = DataType extends { prop: infer P }
+	? P extends string
+		? {
+				[SlotName in ['error-item' | 'label-item'][number] as `${p}-${SlotName}`]: (...args) => ReturnNodeType
+			}
+		: never
+	: never
+
+export declare type SlotType<DataType extends DefaultDataType> = SlotTypeTrans<typeof InputSlot, DataType> &
+	SlotTypeTrans<typeof DateSlot, DataType> &
+	SlotTypeTrans<typeof NumberSlot, DataType> &
+	SlotTypeTrans<typeof SelectSlot, DataType> &
+	SlotFormItemType<DataType>
+
 /**
  * 提取formItem组件methods
  */
-export declare type PickFormItemExpose = Pick<
-	FormItemContext,
-	'size' | 'validateMessage' | 'validateState' | 'validate' | 'resetField' | 'clearValidate'
->
+export declare type PickFormItemExpose =
+	| Pick<FormItemContext, 'size' | 'validateMessage' | 'validateState' | 'validate' | 'resetField' | 'clearValidate'>
+	| VNodeRef
 
 /**
  * 提取columns中字段prop组合的formItem方法属性
