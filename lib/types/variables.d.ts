@@ -39,11 +39,14 @@ export declare type FormItemRenderComponentType =
 	| 'slot'
 	| 'format'
 
-export declare type RenameCssType<Prefix extends string> = { [K in keyof CustomCssType as `${Prefix}`]: CssType[K] }
+/**
+ * 讲TransType中的key用PRrefix拼接
+ */
+export declare type RenameCssType<Prefix extends string, TransType> = {
+	[K in keyof TransType as `${Prefix}${Capitalize<K>}`]: CssType[K]
+}
 
 /**
  * 排除FormItem部分属性
  */
-export declare type PickFormItem = Omit<FormItemProps, 'label' | 'prop' | 'rules'>
-
-export declare type CustomFormItem = PickFormItem
+export declare type PickFormItem = Omit<FormItemProps, 'label' | 'prop' | 'rules' | 'required'> & CustomCssType

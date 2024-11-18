@@ -1,14 +1,8 @@
-import { createTextVNode, h, SetupContext } from 'vue'
-import {
-	CustomCssType,
-	DefaultDataType,
-	EpFormDefaultExpose,
-	PickFormItemExpose,
-	Props,
-	ReturnNodeType,
-	ShowColumnItem
-} from '../type'
-import { FormItemContext, FormItemProps } from 'element-plus'
+import { createTextVNode, h, type SetupContext } from 'vue'
+import type { ColProps, FormItemContext } from 'element-plus'
+import type { ShowColumnItem } from '../types/column'
+import type { Props } from '../types/props'
+import type { ReturnNodeType } from '../types/variables'
 
 /**
  * 定义表单配置
@@ -17,30 +11,38 @@ import { FormItemContext, FormItemProps } from 'element-plus'
  * @param slots 插槽
  * @returns
  */
-export const useFormConfig = <DataType = DefaultDataType>(
-	props: Props<DataType>,
-	columnsList: ComputedRef<ShowColumnItem<DataType>[]>,
-	slots: SetupContext['slots']
-) => {
+export const useFormConfig = <DataType>(props: Props<DataType>, slots: SetupContext['slots']) => {
 	/**
-	 * 表单ref
+	 * 显示表单项
 	 */
-	const formRef = ref<EpFormDefaultExpose>()
+	const columnsList = computed(() => {
+		// 显示表单项
+		const _c = props.columns!.filter(({ show }) => (show === undefined ? true : show))
 
-	/**
-	 * 表单项配置ref
-	 */
-	const formItemRef = ref<Record<string, PickFormItemExpose>>({})
+		// 需要排序显示的项
+		const _order = _c.filter(({ order }) => order !== void 0)
+		// 不需要排序显示的项
+		const _not_order = _c.filter(({ order }) => order === void 0)
 
-	/**
-	 * 设置动态formItem实例ref
-	 * @param v formItem方法实例
-	 * @param prop columns配置属性
-	 */
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	const _onDynamicRef = (v: any, prop: ShowColumnItem<DataType>['prop']) => {
-		formItemRef.value[`${prop as string}FormItemRef`] = v as PickFormItemExpose
-	}
+		const showList = _order.sort((a, b) => b.order! - a.order!).concat(_not_order)
+
+		showList.forEach((item) => {
+			let _col = item.col
+
+			if (typeof _col === 'number') {
+				item.col = { ...props.colProps, span: _col }
+			} else if (typeof _col === 'string') {
+				item.col = { ...props.colProps, span: Number(_col) }
+			} else {
+				item.col = { ...props.colProps, ...(_col as Partial<ColProps>) }
+			}
+
+			_col = item.col
+			item.col = { ...item.col, span: _col.span || 24 }
+		})
+
+		return showList as ShowColumnItem<DataType>[]
+	})
 
 	/**
 	 * 计算是否有自定义formItem error插槽
@@ -76,7 +78,7 @@ export const useFormConfig = <DataType = DefaultDataType>(
 	 * 自定义渲染slot转换函数
 	 * @param renderInfo 渲染组件信息
 	 */
-	const _renderFn = (renderInfo: ReturnNodeType) => {
+	const renderFormLabelErrorFn = (renderInfo: ReturnNodeType) => {
 		if (typeof renderInfo === 'object') {
 			return h(renderInfo)
 		} else {
@@ -84,38 +86,7 @@ export const useFormConfig = <DataType = DefaultDataType>(
 		}
 	}
 
-	const FORM_ITEM_KEYS = [
-		'label',
-		'labelWidth',
-		'labelPosition',
-		'prop',
-		'required',
-		'rules',
-		'error',
-		'validateStatus',
-		'for',
-		'inlineMessage',
-		'showMessage',
-		'size',
-		'class',
-		'style'
-	]
-
 	return {
-		/**
-		 * 表单ref
-		 */
-		formRef,
-		/**
-		 * 表单项配置ref
-		 */
-		formItemRef,
-		/**
-		 * 设置动态formItem实例ref
-		 * @param v formItem方法实例
-		 * @param prop columns配置属性
-		 */
-		_onDynamicRef,
 		/**
 		 * 计算是否有自定义formItem error插槽
 		 */
@@ -128,25 +99,25 @@ export const useFormConfig = <DataType = DefaultDataType>(
 		 * 自定义渲染slot转换函数
 		 * @param renderInfo 渲染组件信息
 		 */
-		_renderFn,
+		renderFormLabelErrorFn,
 		/**
 		 * 提取formItem属性配置
 		 * @param item 显示表单项
 		 */
-		_itemProps: (item: ShowColumnItem<DataType>): Partial<FormItemContext> => {
-			const _form_items = {}
+		pickFromItemProps: (item: ShowColumnItem<DataType>): Partial<FormItemContext> => {
+			const { label, prop, formItemProps, rules, required } = item
 
-			FORM_ITEM_KEYS.forEach((key) => {
-				if (item[key] !== void 0) {
-					_form_items[key as any] = item[key]
-				}
-			})
-
-			console.log(_form_items)
-
-			// eslint-disable-next-line @typescript-eslint/no-unused-vars
-			const { col, order, show, renderType, format, render, labelRender, errorRender, ...rest } = item
-			return rest as Partial<FormItemContext & CustomCssType>
-		}
+			return {
+				label,
+				required,
+				prop: prop as string,
+				rules,
+				...formItemProps
+			}
+		},
+		/**
+		 * 显示表单项
+		 */
+		columnsList
 	}
 }

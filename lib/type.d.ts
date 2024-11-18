@@ -138,7 +138,7 @@ export declare type Props<DataType = DefaultDataType> = {
 	/**
 	 * 表单组件
 	 */
-	modelValue?: UnwrapRef<Partial<DataType>>
+	modelValue?: Partial<DataType>
 	/**
 	 * 显示的表单配置
 	 */

@@ -6,7 +6,7 @@
 					<el-col v-for="item in columnsList" :key="item.prop" v-bind="item.col">
 						<!-- 渲染 form item -->
 						<el-form-item
-							v-bind="_itemProps(item)"
+							v-bind="pickFromItemProps(item)"
 							class="ep_form_item_wrapper"
 							:ref="(refInstacnce) => _onDynamicRef(refInstacnce, item.prop)"
 						>
@@ -17,7 +17,7 @@
 								<div class="ep_error_msg">
 									<!-- 优先自定义渲染的 -->
 									<template v-if="item.errorRender">
-										<component :is="_renderFn(item.errorRender({ errorInfo }))" />
+										<component :is="renderFormLabelErrorFn(item.errorRender({ errorInfo }))" />
 									</template>
 									<template v-else>
 										<!-- 其次error插槽 -->
@@ -36,7 +36,7 @@
 							<template #label="labelInfo">
 								<!-- 优先自定义label渲染 -->
 								<template v-if="item.labelRender">
-									<component :is="_renderFn(item.labelRender({ labelInfo }))" />
+									<component :is="renderFormLabelErrorFn(item.labelRender({ labelInfo }))" />
 								</template>
 								<template v-else>
 									<!-- 其次slot显示 -->
@@ -53,7 +53,7 @@
 							<!-- 组件渲染区域 todo-->
 							<div class="ep_component_wrapper">
 								<!-- :formData="formData" :itemConfig="item"  -->
-								<FormItem />
+								<!-- <FormItem /> -->
 								<!-- <component :is="renderItem(formData, item, emits, slots)" @valueInput="_input"></component> -->
 								<!-- <el-input v-model="formData[item.prop]" /> -->
 							</div>
@@ -89,13 +89,12 @@ import zhCn from 'element-plus/es/locale/lang/zh-cn.mjs'
 // configProps 配置
 import { ConfigProviderProps } from 'element-plus'
 // 类型
-import { Props, EmitType, DefaultDataType, FormItemRef, EpFormProps, SlotType } from './type'
-import { useShowColumns } from './hook/useColumns'
+import { EmitType, DefaultDataType, FormItemRef, EpFormProps } from './type'
 import { useFormConfig } from './hook/useFormConfig'
+import { Props } from './types/props'
+import { useFormRef } from './hook/useFormRef'
 // import { renderItem, FormItem } from './render.item'
-import FormItem from './render.item'
-
-console.log(12312, 'init')
+// import FormItem from './render.item'
 
 // 接收的props
 const props = withDefaults(defineProps<Props<DataType>>(), {
@@ -110,13 +109,13 @@ const props = withDefaults(defineProps<Props<DataType>>(), {
 const emits = defineEmits<EmitType>()
 
 // defineSlots<any>()
-const slots = defineSlots<SlotType<DataType>>()
+// const slots = defineSlots<SlotType<DataType>>()
 // defineSlots<Record<string, any>>()
 
 /**
  * 插槽配置
  */
-// const slots = useSlots()
+const slots = useSlots()
 
 // 默认的configProvider配置
 const defaultConfigProvider: Partial<ConfigProviderProps> = {
@@ -127,12 +126,13 @@ const defaultConfigProvider: Partial<ConfigProviderProps> = {
 // 合并configProvider配置
 const configProvider = computed(() => ({ ...defaultConfigProvider, ...props.configProviderProps }))
 
-const { columnsList } = useShowColumns<DataType>(props)
+const { _onDynamicRef, formItemRef, formRef } = useFormRef()
 
-const { formItemRef, formRef, errorRuleCustomList, labelCustomList, _onDynamicRef, _renderFn, _itemProps } =
-	useFormConfig<DataType>(props, columnsList, slots)
+const { columnsList, errorRuleCustomList, labelCustomList, renderFormLabelErrorFn, pickFromItemProps } = useFormConfig(
+	props,
+	slots
+)
 
-// const formData = ref<Partial<DefaultDataType>>({})
 const formData = ref<Partial<DefaultDataType>>({})
 
 watch(
@@ -150,10 +150,6 @@ watch(
 	},
 	{ deep: true }
 )
-
-const _input = () => {
-	//
-}
 
 onMounted(() => {
 	formData.value = (props.modelValue as Partial<DefaultDataType>) || {}
