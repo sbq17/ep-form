@@ -52,7 +52,9 @@
 
 							<!-- 组件渲染区域 todo-->
 							<div class="ep_component_wrapper">
-								<component :is="renderItem(formData, item, emits, slots)"></component>
+								<!-- :formData="formData" :itemConfig="item"  -->
+								<FormItem />
+								<!-- <component :is="renderItem(formData, item, emits, slots)" @valueInput="_input"></component> -->
 								<!-- <el-input v-model="formData[item.prop]" /> -->
 							</div>
 						</el-form-item>
@@ -90,7 +92,8 @@ import { ConfigProviderProps } from 'element-plus'
 import { Props, EmitType, DefaultDataType, FormItemRef, EpFormProps, SlotType } from './type'
 import { useShowColumns } from './hook/useColumns'
 import { useFormConfig } from './hook/useFormConfig'
-import { renderItem } from './render.item'
+// import { renderItem, FormItem } from './render.item'
+import FormItem from './render.item'
 
 console.log(12312, 'init')
 
@@ -107,13 +110,13 @@ const props = withDefaults(defineProps<Props<DataType>>(), {
 const emits = defineEmits<EmitType>()
 
 // defineSlots<any>()
-defineSlots<SlotType<DataType>>()
+const slots = defineSlots<SlotType<DataType>>()
 // defineSlots<Record<string, any>>()
 
 /**
  * 插槽配置
  */
-const slots = useSlots()
+// const slots = useSlots()
 
 // 默认的configProvider配置
 const defaultConfigProvider: Partial<ConfigProviderProps> = {
@@ -147,6 +150,10 @@ watch(
 	},
 	{ deep: true }
 )
+
+const _input = () => {
+	//
+}
 
 onMounted(() => {
 	formData.value = (props.modelValue as Partial<DefaultDataType>) || {}

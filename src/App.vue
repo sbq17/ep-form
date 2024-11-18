@@ -19,7 +19,10 @@ const columns: CustomFormItem<TestProp>[] = [
 		prop: 'label_3',
 		col: 12,
 		required: true,
-		renderType: 'date'
+		renderType: 'date',
+		dateProps: {
+			class: '12312312'
+		}
 	},
 	{ label: 'label_2', prop: 'label_2', renderType: 'number', col: 12 },
 	{ label: 'label_3', prop: 'label_3', renderType: 'select', col: 24 },

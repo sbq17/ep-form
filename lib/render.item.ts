@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ElDatePicker, ElInput, ElInputNumber, ElSelect, ElTimePicker } from 'element-plus'
-import { DefaultDataType, EmitType, ShowColumnItem } from './type'
+import { ComponentEmitType, DefaultDataType, EpItemProps, ShowColumnItem, SlotType } from './type'
 import { createTextVNode, SetupContext, VNode } from 'vue'
 import { DateSlot, InputSlot, NumberSlot, SelectSlot } from './slots'
 
@@ -13,7 +14,6 @@ const filterSlot = (prop: string, renderType: ShowColumnItem['renderType'], slot
 
 	const slotList = componentSlotMap[renderType] || []
 
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const result = slotList.reduce<Record<string, any>>((_slots, key) => {
 		const name = `${prop}-${renderType}-${key}`
 		const render = slots[name]
@@ -26,10 +26,21 @@ const filterSlot = (prop: string, renderType: ShowColumnItem['renderType'], slot
 	return result
 }
 
+export default defineComponent(
+	<DataType extends DefaultDataType = DefaultDataType>(props: EpItemProps<DataType>, ctx: SetupContext<any>) => {
+		console.log(props, ctx)
+
+		return () => '12312'
+	},
+	{
+		name: 'EpFormItem'
+	}
+)
+
 export const renderItem = <DataType extends DefaultDataType>(
 	formData: Partial<DefaultDataType>,
 	item: ShowColumnItem<DataType>,
-	emits: SetupContext<EmitType>['emit'],
+	emits: SetupContext<ComponentEmitType>['emit'],
 	slots: SetupContext['slots']
 ) => {
 	console.log(emits)
@@ -43,7 +54,18 @@ export const renderItem = <DataType extends DefaultDataType>(
 
 	switch (item.renderType) {
 		case 'input':
-			renderNode = h(ElInput, {}, { ..._slots })
+			renderNode = h(
+				ElInput,
+				{
+					onChange: (v) => {
+						console.log(v)
+					},
+					onInput: (v) => {
+						console.log(v)
+					}
+				},
+				{ ..._slots }
+			)
 			break
 
 		case 'number':
@@ -63,7 +85,6 @@ export const renderItem = <DataType extends DefaultDataType>(
 			break
 
 		case 'text':
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			renderNode = createTextVNode(formData[item.prop as any])
 			break
 

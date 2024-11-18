@@ -8,7 +8,7 @@ import {
 	ReturnNodeType,
 	ShowColumnItem
 } from '../type'
-import { FormItemContext } from 'element-plus'
+import { FormItemContext, FormItemProps } from 'element-plus'
 
 /**
  * 定义表单配置
@@ -84,6 +84,23 @@ export const useFormConfig = <DataType = DefaultDataType>(
 		}
 	}
 
+	const FORM_ITEM_KEYS = [
+		'label',
+		'labelWidth',
+		'labelPosition',
+		'prop',
+		'required',
+		'rules',
+		'error',
+		'validateStatus',
+		'for',
+		'inlineMessage',
+		'showMessage',
+		'size',
+		'class',
+		'style'
+	]
+
 	return {
 		/**
 		 * 表单ref
@@ -117,6 +134,16 @@ export const useFormConfig = <DataType = DefaultDataType>(
 		 * @param item 显示表单项
 		 */
 		_itemProps: (item: ShowColumnItem<DataType>): Partial<FormItemContext> => {
+			const _form_items = {}
+
+			FORM_ITEM_KEYS.forEach((key) => {
+				if (item[key] !== void 0) {
+					_form_items[key as any] = item[key]
+				}
+			})
+
+			console.log(_form_items)
+
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			const { col, order, show, renderType, format, render, labelRender, errorRender, ...rest } = item
 			return rest as Partial<FormItemContext & CustomCssType>

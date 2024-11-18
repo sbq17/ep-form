@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type {
 	ColProps,
 	ConfigProviderProps,
@@ -16,7 +17,6 @@ import type {
 import type { CSSProperties, UnwrapRef, VNode, VNodeRef } from 'vue'
 import type { DateSlot, InputSlot, NumberSlot, SelectSlot } from './slots'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 declare type DefaultDataType = Record<string, any>
 // declare type DefaultDataType = FormProps['model']
 
@@ -101,7 +101,7 @@ export declare type DefaultCustomColumns<DataType extends DefaultDataType = Defa
 /**
  * 自定义formItem类型
  */
-export declare type CustomFormItem<DataType = DefaultDataType> =
+export declare type CustomFormItem<DataType extends DefaultDataType = DefaultDataType> =
 	DefaultCustomColumns<DataType> extends { renderType: infer Type }
 		? Type extends 'input'
 			? InputItemProps<DataType> & FormatProps<InputItemProps<DataType>>
@@ -166,37 +166,15 @@ export declare type Props<DataType = DefaultDataType> = {
  * emit事件
  */
 export declare type EmitType = {
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	'update:modelValue': [formData: any]
 }
 
-// declare type SlotEnumType = {
-// 	input: typeof InputSlot
-// 	select: typeof SelectSlot
-// 	date: typeof DateSlot
-// 	number: typeof NumberSlot
-// }
-
-// type SlotTypeTrans<
-// 	DataType extends DefaultDataType = DefaultDataType,
-// 	K extends keyof DataType = keyof DataType,
-// 	RenderType extends keyof SlotEnumType = keyof SlotEnumType
-// > = RenderType extends keyof SlotEnumType
-// 	? {
-// 			[Item in SlotEnumType[RenderType][number] as `${K}-${RenderType}-${Item}`]: (...args: any[]) => string | VNode
-// 		}
-// 	: never
-
-// type SlotTypeTrans<
-// 	SlotType extends readonly string[],
-// 	DataType extends DefaultDataType = DefaultDataType,
-// 	K extends keyof DataType = keyof DataType,
-// 	RenderType extends keyof SlotEnumType = keyof SlotEnumType
-// > = {
-// 	[Item in SlotType[number] as `${K}-${RenderType}-${Item}`]: (...args: any[]) => string | VNode
-// }
-
-// export declare type SlotType<DataType extends DefaultDataType> = SlotTypeTrans<DataType>
+/**
+ * 组件Emit类型
+ */
+export declare type ComponentEmitType = {
+	valueInput: [v: any, prop: string]
+}
 
 export declare type SlotTypeTrans<
 	SlotType extends readonly string[],
@@ -328,4 +306,10 @@ declare type FormatProps<ColumnType> = {
 	 * @returns
 	 */
 	render?: ({ columns }: { columns: ColumnType }) => ReturnNodeType
+}
+
+export declare type EpItemProps<DataType extends DefaultDataType = DefaultDataType> = {
+	defineSlots?: SlotType<DataType>
+	formData: Partial<DefaultDataType>
+	itemConfig: CustomFormItem<DataType>
 }

@@ -9,7 +9,7 @@ import type {
 } from 'vue'
 import {
 	Props,
-	CustomFormItem as EpColumnsItem,
+	CustomFormItem as EpColumnItem,
 	ReturnNodeType as EpReturnNodeType,
 	EpFormProps,
 	EpFormExpose,
@@ -40,7 +40,7 @@ declare const _default: __VLS_WithTemplateSlots<
 	Readonly<Slots> & Slots
 >
 
-export { EpColumnsItem, EpReturnNodeType, EpFormProps, EpFormExpose, EpFormatProps }
+export { EpColumnItem, EpReturnNodeType, EpFormProps, EpFormExpose, EpFormatProps }
 
 export default _default
 
