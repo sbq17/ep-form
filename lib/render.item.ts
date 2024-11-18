@@ -32,6 +32,8 @@ export const renderItem = <DataType extends DefaultDataType>(
 	emits: SetupContext<EmitType>['emit'],
 	slots: SetupContext['slots']
 ) => {
+	console.log(emits)
+
 	let renderNode: VNode | undefined = undefined
 
 	const { prop, renderType } = item

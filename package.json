@@ -21,6 +21,7 @@
 	},
 	"dependencies": {
 		"element-plus": "^2.8.0",
+		"mathjs": "^13.2.1",
 		"vue": "^3.4.38"
 	},
 	"devDependencies": {
@@ -33,6 +34,9 @@
 		"eslint-plugin-prettier": "^5.2.1",
 		"eslint-plugin-vue": "^9.27.0",
 		"globals": "^15.9.0",
+		"postcss": "^8.4.47",
+		"postcss-import": "^16.1.0",
+		"tailwindcss": "^3.4.14",
 		"typescript": "^5.4.5",
 		"typescript-eslint": "^8.2.0",
 		"unplugin-auto-import": "^0.18.2",
@@ -43,4 +47,3 @@
 		"vue-tsc": "^2.0.29"
 	}
 }
-

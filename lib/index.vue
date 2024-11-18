@@ -174,6 +174,16 @@ defineExpose({
 
 .ep_component_wrapper {
 	width: 100%;
+
+	> div {
+		@apply !w-full;
+	}
+
+	::v-deep() {
+		> div {
+			@apply w-full;
+		}
+	}
 }
 
 /* 错误信息 */
