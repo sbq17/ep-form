@@ -12,9 +12,9 @@ export default defineConfig({
 		vue(),
 		vueDevTools(),
 		dts({
-			rollupTypes: true, // 合并类型
-			insertTypesEntry: true, // 插入类型入口
-			exclude: ['src/main.ts'] // 排除不需要生成类型的文件
+			rollupTypes: true, // 合并类型声明
+			insertTypesEntry: true, // 在入口文件插入类型声明入口
+			exclude: ['src/main.ts'] // 排除不需要的文件
 		}),
 		AutoImport({
 			imports: ['vue'],
@@ -30,7 +30,7 @@ export default defineConfig({
 	build: {
 		lib: {
 			entry: './lib/main.ts',
-			name: 'ep_form',
+			name: 'ep-form',
 			fileName: 'index',
 			formats: ['es', 'umd']
 		},

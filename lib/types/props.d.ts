@@ -1,37 +1,14 @@
-import { ColProps, FormItemRule, FormProps, RowProps } from 'element-plus'
-import { CustomCssType } from './variables'
-import { EpItemProp } from './column'
-
-export declare type EpFormProps = Omit<FormProps, 'model' | 'rules'> &
-	CustomCssType & { rules?: Record<string, FormItemRule[]> }
+export declare type EpItem<T> = {
+	prop: keyof T
+	label: string
+}
 
 /**
- * 组件接收props
+ * 组件Props
  */
-export declare type Props<DataType = DefaultDataType> = {
-	/**
-	 * 表单组件
-	 */
-	modelValue?: DataType
-	/**
-	 * 显示的表单配置
-	 */
-	columns?: EpItemProp<DataType>[]
-	/**
-	 * ElConfigProvider属性
-	 */
-	configProviderProps?: Partial<ConfigProviderProps>
-	/**
-	 * elForm表单配置props
-	 */
-	formProps?: Partial<EpFormProps>
-	/**
-	 * 列配置
-	 */
-	rowProps?: Partial<RowProps & CustomCssType>
-	/**
-	 * 行默认配置
-	 */
-	colProps?: Partial<ColProps & CustomCssType>
-	'update:modelValue'?: (data: DataType) => void
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export declare type EpProps<T = any> = {
+	modelValue?: T
+	columns?: EpItem<T>[]
+	'onUpdate:modelValue'?: (data: T) => void
 }
