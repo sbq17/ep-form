@@ -1,13 +1,20 @@
-import type { DefineSetupFnComponent } from 'vue'
-import type { EpEmitType, EpItem, EpProps } from './types'
+// import type { DefineSetupFnComponent } from 'vue'
+// import type { EpColumnItem, FormatProps as EpFormatProps } from './types/column'
+// import type { EpFormExpose } from './types/expose'
+// import type { Props, EpFormProps } from './types/props'
+// import type { DefaultDataType as EpDefaultData, ReturnNodeType as EpReturnNodeType } from './types/variables'
+// import type { EmitType } from './types/emit'
+// import type { SlotType as EpSlotType } from './types/slot'
 
-export type { EpEmitType, EpItem, EpProps }
+// export { EpColumnItem, EpReturnNodeType, EpFormProps, EpFormExpose, EpFormatProps }
 
-type EpFormComponent<T> = DefineSetupFnComponent<EpProps<T>, EpEmitType<T>>
+// // declare const _default: <DataType extends DefaultDataType>()
 
-declare const _default: <T>() => EpFormComponent<T>
+// // export default _default
+// type MyComponentType<T = EpDefaultData> = DefineSetupFnComponent<Props<T>, EmitType, EpSlotType<T>>
 
-export declare const EpForm: <T>() => EpFormComponent<T>
+// declare const _default: MyComponentType
+// // declare const _default: DefineSetupFnComponent<Props, EmitType, EpSlotType>
 
-export default _default
+// export default _default
 

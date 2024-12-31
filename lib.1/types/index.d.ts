@@ -1,6 +1,4 @@
-export * from './column'
 export * from './emit'
-export * from './expose'
 export * from './props'
-export * from './slot'
+export * from './slots'
 export * from './variables'

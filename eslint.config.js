@@ -31,7 +31,7 @@ export default [
 			'@typescript-eslint/no-unused-vars': ['error', { varsIgnorePattern: '^_', argsIgnorePattern: '^_' }],
 			// '@typescript-eslint/no-unused-vars': 'error',
 			// 提示未导入的类型
-			'@typescript-eslint/explicit-module-boundary-types': 'warn',
+			// '@typescript-eslint/explicit-module-boundary-types': 'warn',
 			'@typescript-eslint/consistent-type-imports': [
 				'error',
 				{

@@ -1,7 +1,7 @@
 import { fileURLToPath, URL } from 'node:url'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import vueDevTools from 'vite-plugin-vue-devtools'
+// import vueDevTools from 'vite-plugin-vue-devtools'
 import dts from 'vite-plugin-dts'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
@@ -10,11 +10,15 @@ import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 export default defineConfig({
 	plugins: [
 		vue(),
-		vueDevTools(),
+		// vueDevTools(),
 		dts({
-			rollupTypes: true, // 合并类型声明
-			insertTypesEntry: true, // 在入口文件插入类型声明入口
-			exclude: ['src/main.ts'] // 排除不需要的文件
+			// declarationOnly: true,
+			rollupTypes: true,
+			// include: ['./lib/index.d.ts', './lib/types/*.d.ts'],
+			// insertTypesEntry: true,
+			tsconfigPath: './tsconfig.json',
+
+			exclude: ['./src/**/*']
 		}),
 		AutoImport({
 			imports: ['vue'],

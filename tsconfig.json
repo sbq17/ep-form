@@ -7,30 +7,17 @@
 		"skipLibCheck": true,
 
 		/* Bundler mode */
-		"moduleResolution": "Bundler",
-		// "allowImportingTsExtensions": true,
+		"moduleResolution": "bundler",
+		"allowImportingTsExtensions": true,
 		"resolveJsonModule": true,
 		"isolatedModules": true,
-		// "noEmit": true,
+		"noEmit": true,
 
 		/* Linting */
 		"strict": true,
 		"noUnusedLocals": true,
 		"noUnusedParameters": true,
-		"noFallthroughCasesInSwitch": true,
-		"experimentalDecorators": true,
-
-		"declaration": true,
-		"emitDeclarationOnly": true,
-		"outDir": "./dist"
+		"noFallthroughCasesInSwitch": true
 	},
-	"include": ["src", "lib", "types/vite-env.d.ts", "types/auto-imports.d.ts", "types/components.d.ts"]
+	"include": ["src", "lib/**/*", "types/vite-env.d.ts", "types/auto-imports.d.ts", "types/components.d.ts"]
 }
-
-// "exports": {
-// 		"types": "./dist/index.d.ts",
-// 		"import": "./dist/index.js",
-// 		"require": "./dist/index.umd.cjs"
-
-
-// 	},
