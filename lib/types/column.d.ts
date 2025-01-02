@@ -1,4 +1,12 @@
 import type {
+	DateSlot,
+	DefaultSlotType,
+	InputSlot,
+	NumberSlot,
+	SelectSlot,
+	TransComponentSlot
+} from './slot'
+import type {
 	CustomCssType,
 	DefaultDataType,
 	ErrorMsg,
@@ -74,7 +82,10 @@ export declare type CustomColumnItem<DataType = DefaultDataType> = {
 /**
  * 显示columns属性
  */
-export declare type ShowColumnItem<DataType = DefaultDataType> = Omit<CustomColumnItem<DataType>, 'col'> & {
+export declare type ShowColumnItem<DataType = DefaultDataType> = Omit<
+	CustomColumnItem<DataType>,
+	'col'
+> & {
 	col: Partial<ColProps>
 }
 
@@ -84,18 +95,32 @@ export declare type ShowColumnItem<DataType = DefaultDataType> = Omit<CustomColu
 export declare type EpColumnItem<DataType extends DefaultDataType = DefaultDataType> =
 	CustomColumnItem<DataType> extends { renderType: infer Type }
 		? Type extends 'input'
-			? InputItemProps<DataType> & FormatProps<InputItemProps<DataType>, DataType>
+			? InputItemProps<DataType> &
+					FormatProps<InputItemProps<DataType>, DataType> &
+					TransComponentSlot<InputSlot>
 			: Type extends 'select'
-				? SelectItemProps<DataType> & FormatProps<SelectItemProps<DataType>, DataType>
+				? SelectItemProps<DataType> &
+						FormatProps<SelectItemProps<DataType>, DataType> &
+						TransComponentSlot<SelectSlot>
 				: Type extends 'date'
-					? DateItemProps<DataType> & FormatProps<DateItemProps<DataType>, DataType>
+					? DateItemProps<DataType> &
+							FormatProps<DateItemProps<DataType>, DataType> &
+							TransComponentSlot<DateSlot>
 					: Type extends 'time'
-						? TimeItemProps<DataType> & FormatProps<TimeItemProps<DataType>, DataType>
+						? TimeItemProps<DataType> &
+								FormatProps<TimeItemProps<DataType>, DataType> &
+								DefaultSlotType
 						: Type extends 'number'
-							? NumberItemProps<DataType> & FormatProps<NumberItemProps<DataType>, DataType>
+							? NumberItemProps<DataType> &
+									FormatProps<NumberItemProps<DataType>, DataType> &
+									TransComponentSlot<NumberSlot>
 							: Type extends 'text'
-								? TextItemProps<DataType> & FormatProps<TextItemProps<DataType>, DataType>
-								: FormatItemProps<DataType> & FormatProps<FormatItemProps<DataType>, DataType>
+								? TextItemProps<DataType> &
+										FormatProps<TextItemProps<DataType>, DataType> &
+										DefaultSlotType
+								: FormatItemProps<DataType> &
+										FormatProps<FormatItemProps<DataType>, DataType> &
+										DefaultSlotType
 		: CustomColumnItem<DataType>
 
 /**
@@ -131,7 +156,9 @@ export declare type DateItemProps<DataType = DefaultDataType> = CustomColumnItem
 export declare type TimeItemProps<DataType = DefaultDataType> = CustomColumnItem<DataType> & {
 	renderType: 'time'
 } & {
-	timeProps?: Partial<Omit<TimePickerDefaultProps, 'modelValue' | 'update:modelValue'> & CustomCssType>
+	timeProps?: Partial<
+		Omit<TimePickerDefaultProps, 'modelValue' | 'update:modelValue'> & CustomCssType
+	>
 }
 
 /**
@@ -156,9 +183,9 @@ export declare type TextItemProps<DataType = DefaultDataType> = CustomColumnItem
  * 自定义渲染 column配置
  */
 export declare type FormatItemProps<DataType = DefaultDataType> = CustomColumnItem<DataType> & {
-	renderType: 'slot' | 'format'
+	renderType: 'render'
 } & {
-	slotProps?: Partial<CustomCssType>
+	renderProps?: Partial<CustomCssType>
 }
 
 /**

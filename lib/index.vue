@@ -10,7 +10,6 @@
 							v-bind="pickFromItemProps(item)"
 							:ref="(refInstacnce) => _onDynamicRef(refInstacnce, item.prop)"
 						>
-							<!-- :ref="(refInstacnce: PickFormItemExpose) => _onDynamicRef(refInstacnce, item.prop)" -->
 							<!-- form item error 插槽 -->
 							<!-- 重写error插槽是为了更好的设置样式 -->
 							<template #error="errorInfo">
@@ -23,8 +22,6 @@
 										<!-- 其次error插槽 -->
 										<template v-if="errorRuleCustomList.includes(item.prop as string)">
 											<slot :name="renderItemSlotName(item.prop, 'error')" :msg="errorInfo" />
-											<!-- <slot :name="`${item.prop}-error-item`" :error="errorInfo" /> -->
-											<!-- <slot :name="`${item.prop as string}-error-item`" :error="errorInfo" /> -->
 										</template>
 										<template v-else>
 											<!-- 最后是error信息 -->
@@ -176,9 +173,24 @@ defineExpose({
 	formItemRef: formItemRef as Ref<Partial<FormItemRef<DataType>>>
 })
 
+// onUpdated(() => {})
+// onBeforeUpdate(() => {})
+// onErrorCaptured(() => {})
+// onRenderTracked(() => {})
+// onRenderTriggered(() => {})
+// onActivated(() => {})
+// onDeactivated(() => {})
+// onServerPrefetch(() => {})
+
+// onBeforeMount(() => {})
+
 onMounted(() => {
 	formData.value = (props.modelValue || {}) as UnwrapRef<Partial<DefaultDataType>>
 })
+
+// onBeforeUnmount(() => {})
+
+// onUnmounted(() => {})
 </script>
 
 <style lang="postcss" scoped>

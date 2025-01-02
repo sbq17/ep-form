@@ -12,17 +12,13 @@ export default defineConfig({
 		vue(),
 		// vueDevTools(),
 		dts({
-			// declarationOnly: true,
 			rollupTypes: true,
-			// include: ['./lib/index.d.ts', './lib/types/*.d.ts'],
-			// insertTypesEntry: true,
 			tsconfigPath: './tsconfig.json',
 
 			exclude: ['./src/**/*']
 		}),
 		AutoImport({
 			imports: ['vue'],
-			// ignore: ['h'],
 			resolvers: [ElementPlusResolver()],
 			dts: fileURLToPath(new URL('./types/auto-imports.d.ts', import.meta.url))
 		}),
@@ -40,7 +36,8 @@ export default defineConfig({
 		},
 		rollupOptions: {
 			// 确保外部依赖不被打包
-			external: ['vue', 'element-plus'], // 将 Vue 视为外部依赖
+			// external: ['vue', 'element-plus'], // 将 Vue 视为外部依赖
+			external: ['vue'], // 将 Vue 视为外部依赖
 			output: {
 				globals: {
 					vue: 'Vue', // UMD 格式下的全局变量名

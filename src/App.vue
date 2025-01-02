@@ -1,11 +1,9 @@
 <template>
-	<EpCustomForm :columns="columns" v-model="data">
-		<template #label_1-error-item="{ msg }">{{ msg }}</template>
-	</EpCustomForm>
+	<EpForm :columns="columns" v-model="data"> </EpForm>
 </template>
 
 <script lang="ts" setup>
-import { type EpColumnItem, EpCustomForm } from '../lib/main'
+import { type EpColumnItem, EpForm } from '../lib/main'
 
 type TestProp = { label_1: string; label_2: string; label_3: string; label_4: string }
 
@@ -25,12 +23,33 @@ const columns: EpColumnItem<TestProp>[] = [
 		prop: 'label_3',
 		col: 12,
 		required: true,
-		renderType: 'date'
+		renderType: 'date',
+		dateProps: {
+			type: 'datetimerange'
+		}
 	},
-	{ label: 'label_2', prop: 'label_2', renderType: 'number', col: 12 },
-	{ label: 'label_3', prop: 'label_3', renderType: 'select', col: 24 },
-	{ label: 'label_4', prop: 'label_4', renderType: 'format' }
+	{
+		label: 'label_2',
+		prop: 'label_2',
+		renderType: 'date',
+		dateProps: {
+			type: 'dates'
+		},
+		col: 12,
+		slot: {
+			// default: () => {
+			// 	return 'xxx'
+			// }
+		}
+	},
+	{
+		label: 'label_3',
+		prop: 'label_3',
+		renderType: 'select',
+		col: 24
+	},
+	{ label: 'label_4', prop: 'label_4', renderType: 'render' }
 ]
 
-const data = ref<Partial<TestProp>>({ label_1: '12312', label_2: 'xxxx-label-2' })
+const data = ref<Partial<TestProp>>({ label_1: '12312', label_2: '' })
 </script>

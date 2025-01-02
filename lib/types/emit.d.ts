@@ -7,6 +7,7 @@ export type EpItemEmitParams<DataType extends DefaultDataType, EventType = any> 
 	renderType: FormItemRenderComponentType
 	value?: any
 	event?: EventType
+	visible?: boolean
 }
 
 export declare type EmitType<DataType extends DefaultDataType> = {
@@ -30,4 +31,5 @@ export declare type EpItemEmitType<DataType extends DefaultDataType> = {
 	itemBlur: [params: EpItemEmitParams<DataType, FocusEvent>]
 	itemFocus: [params: EpItemEmitParams<DataType, FocusEvent>]
 	itemClear: [params: EpItemEmitParams<DataType, any>]
+	itemVisible: [params: EpItemEmitParams<DataType, any>]
 }

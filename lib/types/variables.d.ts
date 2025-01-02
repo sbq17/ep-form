@@ -36,8 +36,7 @@ export declare type FormItemRenderComponentType =
 	| 'number'
 	| 'time'
 	| 'text'
-	| 'slot'
-	| 'format'
+	| 'render'
 
 /**
  * 讲TransType中的key用Prefix拼接
@@ -49,7 +48,8 @@ export declare type RenameCssType<Prefix extends string, TransType> = {
 /**
  * 排除FormItem部分属性
  */
-export declare type PickFormItem = Omit<FormItemProps, 'label' | 'prop' | 'rules' | 'required'> & CustomCssType
+export declare type PickFormItem = Omit<FormItemProps, 'label' | 'prop' | 'rules' | 'required'> &
+	CustomCssType
 
 /**
  * 错误消息类型

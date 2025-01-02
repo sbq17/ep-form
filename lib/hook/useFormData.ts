@@ -1,7 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { DefaultDataType, EmitType, EpItemEmitParams, Props } from '../types'
 
-export const useFormData = <DataType extends DefaultDataType>(props: Props<DataType>, emits: EmitType<DataType>) => {
+export const useFormData = <DataType extends DefaultDataType>(
+	props: Props<DataType>,
+	emits: EmitType<DataType>
+) => {
 	/**
 	 * 发送表单数据
 	 * 当组件的'onUpdate:modelValue'属性存在时，此函数会被调用
@@ -31,6 +34,8 @@ export const useFormData = <DataType extends DefaultDataType>(props: Props<DataT
 		if (props.onEpInput) {
 			emits('epInput', params)
 		}
+
+		console.log(params)
 
 		// 更新表单数据，通过将当前的modelValue与新的输入参数合并
 		emitFormData({ ...props.modelValue, [params.prop]: params.value } as any)

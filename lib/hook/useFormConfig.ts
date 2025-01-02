@@ -10,7 +10,10 @@ import type { ReturnNodeType, Props, ShowColumnItem, SlotType, DefaultDataType }
  * @param slots 插槽
  * @returns
  */
-export const useFormConfig = <DataType>(props: Props<DataType>, slots: SlotType<DefaultDataType>) => {
+export const useFormConfig = <DataType>(
+	props: Props<DataType>,
+	slots: SlotType<DefaultDataType>
+) => {
 	/**
 	 * 显示表单项
 	 */
@@ -38,6 +41,38 @@ export const useFormConfig = <DataType>(props: Props<DataType>, slots: SlotType<
 
 			_col = item.col as Partial<ColProps>
 			item.col = { ...(item.col as Partial<ColProps>), span: _col.span || 24 }
+
+			if (item.renderType === 'date') {
+				const { type, format, valueFormat, dateFormat, timeFormat } = item.dateProps || {}
+
+				let d_format = '',
+					d_valueFormat = '',
+					d_dateFormat = '',
+					d_timeFormat = ''
+
+				if (type?.includes('datetime')) {
+					d_format = 'YYYY-MM-DD HH:mm:ss'
+					d_dateFormat = 'YYYY-MM-DD'
+					d_timeFormat = 'HH:mm:ss'
+					d_valueFormat = 'YYYY-MM-DD HH:mm:ss'
+				} else if (type?.includes('date')) {
+					d_format = 'YYYY-MM-DD'
+					d_valueFormat = 'YYYY-MM-DD'
+				} else if (type?.includes('month')) {
+					d_format = 'YYYY-MM'
+					d_valueFormat = 'YYYY-MM'
+				} else if (type?.includes('year')) {
+					d_format = 'YYYY'
+					d_valueFormat = 'YYYY'
+				}
+				item.dateProps = {
+					...item.dateProps,
+					format: format || d_format,
+					valueFormat: valueFormat || d_valueFormat,
+					dateFormat: dateFormat || d_dateFormat,
+					timeFormat: timeFormat || d_timeFormat
+				}
+			}
 		})
 
 		return showList as ShowColumnItem<DataType>[]

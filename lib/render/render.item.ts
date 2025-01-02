@@ -1,8 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { SetupContext, VNode } from 'vue'
-import type { ShowColumnItem, DefaultDataType, EpItemProps, EpItemEmitType, EpColumnItem } from '../types'
+import type {
+	ShowColumnItem,
+	DefaultDataType,
+	EpItemProps,
+	EpItemEmitType,
+	EpColumnItem
+} from '../types'
 import { ElDatePicker, ElInput, ElInputNumber, ElSelect, ElTimePicker } from 'element-plus'
-import { DateSlot, InputSlot, NumberSlot, SelectSlot } from '../constant/slots'
+import { DateSlot, InputSlot, NumberSlot, SelectSlot } from '../constant'
 import { createTextVNode } from 'vue'
 
 /**
@@ -18,15 +24,19 @@ const filterSlot = <DataType extends DefaultDataType>(
 	slots: SetupContext['slots']
 ): SetupContext['slots'] => {
 	const { prop, renderType } = item
+	const customSlot = item.slot || {}
 
 	/**
 	 * 插槽映射map
 	 */
-	const componentSlotMap: Partial<Record<ShowColumnItem['renderType'], readonly string[]>> = {
+	const componentSlotMap: Record<ShowColumnItem['renderType'], readonly string[]> = {
 		input: InputSlot,
 		select: SelectSlot,
 		number: NumberSlot,
-		date: DateSlot
+		date: DateSlot,
+		render: ['default'],
+		text: ['default'],
+		time: []
 	}
 
 	/**
@@ -38,11 +48,18 @@ const filterSlot = <DataType extends DefaultDataType>(
 	 * 获取可以匹配到的插槽
 	 */
 	const result = slotList.reduce<Record<string, any>>((_slots, key) => {
-		const name = `${prop as string}-${renderType}-${key}`
-		const render = slots[name]
-		if (render) {
-			_slots[key] = () => render({ formData: formData, itemConfig: item })
+		let _renderFn: any = undefined
+		if (customSlot[key as keyof typeof customSlot]) {
+			_renderFn = customSlot[key as keyof typeof customSlot]
+		} else {
+			const name = `${prop as string}-${renderType}-${key}`
+			_renderFn = slots[name]
 		}
+
+		if (_renderFn) {
+			_slots[key] = () => _renderFn({ formData: formData, itemConfig: item })
+		}
+
 		return _slots
 	}, {})
 
@@ -54,11 +71,17 @@ const emitsFn = <DataType extends DefaultDataType>(
 	emits: SetupContext<EpItemEmitType<DataType>>['emit']
 ) => {
 	return {
-		emitBlur: (e: FocusEvent) => emits('itemBlur', { prop: item.prop, renderType: item.renderType, event: e }),
-		emitFocus: (e: FocusEvent) => emits('itemFocus', { prop: item.prop, renderType: item.renderType, event: e }),
-		emitChange: (value: any) => emits('itemChange', { prop: item.prop, renderType: item.renderType, value }),
-		emitInput: (value: any) => emits('itemInput', { prop: item.prop, renderType: item.renderType, value }),
-		emitClear: () => emits('itemClear', { prop: item.prop, renderType: item.renderType })
+		emitBlur: (e: FocusEvent) =>
+			emits('itemBlur', { prop: item.prop, renderType: item.renderType, event: e }),
+		emitFocus: (e: FocusEvent) =>
+			emits('itemFocus', { prop: item.prop, renderType: item.renderType, event: e }),
+		emitChange: (value: any) =>
+			emits('itemChange', { prop: item.prop, renderType: item.renderType, value }),
+		emitInput: (value: any) =>
+			emits('itemInput', { prop: item.prop, renderType: item.renderType, value }),
+		emitClear: () => emits('itemClear', { prop: item.prop, renderType: item.renderType }),
+		emitVisible: (value: boolean) =>
+			emits('itemVisible', { prop: item.prop, renderType: item.renderType, visible: value })
 		// emitSelect: (value: any) => emits('itemSelect', { prop: item.prop, renderType: item.renderType, value }),
 		// emitReset: () => emits('itemReset', { prop: item.prop, renderType: item.renderType })
 	}
@@ -85,20 +108,43 @@ const renderItem = <DataType extends DefaultDataType>(
 	// 自定义渲染插槽
 	const _slots = filterSlot(formData, item, slots)
 
-	const { emitBlur, emitChange, emitFocus, emitInput, emitClear } = emitsFn(item, emits)
+	const { emitBlur, emitChange, emitFocus, emitInput, emitClear, emitVisible } = emitsFn(
+		item,
+		emits
+	)
+
+	const modelValue = formData[prop]
 
 	switch (item.renderType) {
 		case 'input':
 			renderNode = h(
 				ElInput,
 				{
-					modelValue: formData[prop],
+					modelValue,
 					...item.inputProps,
 					onBlur: emitBlur,
 					onFocus: emitFocus,
 					onChange: emitChange,
 					onInput: emitInput,
 					onClear: emitClear
+				},
+				{ ..._slots }
+			)
+			break
+
+		case 'date':
+			renderNode = h(
+				ElDatePicker,
+				{
+					modelValue,
+					...item.dateProps,
+					'onUpdate:modelValue': emitInput,
+					onBlur: emitBlur,
+					onFocus: emitFocus,
+					onChange: emitInput,
+					onClear: emitClear,
+					onCalendarChange: emitChange,
+					onVisibleChange: emitVisible
 				},
 				{ ..._slots }
 			)
@@ -112,22 +158,12 @@ const renderItem = <DataType extends DefaultDataType>(
 			renderNode = h(ElSelect, {})
 			break
 
-		case 'date':
-			renderNode = h(ElDatePicker, {})
-			break
-
 		case 'time':
 			renderNode = h(ElTimePicker, {})
 			break
 
 		case 'text':
 			renderNode = createTextVNode(formData[item.prop as any])
-			break
-
-		case 'slot':
-			break
-
-		case 'format':
 			break
 
 		default:
@@ -164,6 +200,6 @@ export default defineComponent(
 				default: () => ({})
 			}
 		},
-		emits: ['itemInput', 'itemChange', 'itemBlur', 'itemFocus', 'itemClear']
+		emits: ['itemInput', 'itemChange', 'itemBlur', 'itemFocus', 'itemClear', 'itemVisible']
 	}
 )

@@ -10,11 +10,39 @@ import type {
 	SelectItemProps
 } from '.'
 
-declare type DateSlot = readonly ['default', 'range-separator', 'prev-month', 'next-month', 'prev-year', 'next-year']
-declare type InputSlot = readonly ['prefix', 'suffix', 'prepend', 'append']
-declare type NumberSlot = readonly ['decrease-icon', 'increase-icon']
-declare type SelectSlot = readonly ['default', 'header', 'footer', 'prefix', 'empty', 'tag', 'loading', 'label']
+export declare type InputSlot = readonly ['prefix', 'suffix', 'prepend', 'append']
+export declare type DateSlot = readonly [
+	'default',
+	'range-separator',
+	'prev-month',
+	'next-month',
+	'prev-year',
+	'next-year'
+]
+export declare type NumberSlot = readonly ['decrease-icon', 'increase-icon']
+export declare type SelectSlot = readonly ['default', 'header', 'footer', 'prefix', 'empty', 'tag', 'loading', 'label']
 
+/**
+ * 转换组件中的插槽集合来生成slot类型
+ */
+export declare type TransComponentSlot<SlotList extends Array> = {
+	slot?: Partial<{
+		[Name in SlotList[number] as `${Name}`]: (params: SlotParams<DataType, ColumnItem>) => ReturnNodeType
+	}>
+}
+
+/**
+ * 默认插槽类型
+ */
+export declare type DefaultSlotType = {
+	slot?: Partial<{
+		default: (params: SlotParams<DataType, ColumnItem>) => ReturnNodeType
+	}>
+}
+
+/**
+ * 插槽参数
+ */
 declare type SlotParams<DataType, ColumnItem> = {
 	/**
 	 * 表单数据
