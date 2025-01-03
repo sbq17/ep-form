@@ -5,7 +5,8 @@ import type {
 	DefaultDataType,
 	EpItemProps,
 	EpItemEmitType,
-	EpColumnItem
+	EpColumnItem,
+	DateDefaultSlotParams
 } from '../types'
 import { ElDatePicker, ElInput, ElInputNumber, ElSelect, ElTimePicker } from 'element-plus'
 import { DateSlot, InputSlot, NumberSlot, SelectSlot } from '../constant'
@@ -57,7 +58,15 @@ const filterSlot = <DataType extends DefaultDataType>(
 		}
 
 		if (_renderFn) {
-			_slots[key] = () => _renderFn({ formData: formData, itemConfig: item })
+			_slots[key] = (params: DateDefaultSlotParams) => {
+				console.log(params, key, renderType)
+
+				if (params) {
+					return _renderFn({ formData: formData, itemConfig: item, params })
+				} else {
+					return _renderFn({ formData: formData, itemConfig: item })
+				}
+			}
 		}
 
 		return _slots

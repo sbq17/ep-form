@@ -215,7 +215,7 @@ onMounted(() => {
 	width: 100%;
 
 	> div {
-		@apply !w-full;
+		/* @apply !w-full; */
 	}
 
 	::v-deep() {
@@ -223,10 +223,31 @@ onMounted(() => {
 			@apply w-full;
 		}
 
+		.el-input {
+			.el-input-group__prepend,
+			.el-input-group__append {
+				@apply px-2;
+			}
+
+			.el-input__prefix {
+				@apply pr-1;
+			}
+
+			.el-input__suffix {
+				@apply pl-1;
+			}
+		}
+	}
+
+	/* ::v-deep() {
+		> div {
+			@apply w-full;
+		}
+
 		.el-input__prefix {
 			@apply pr-1;
 		}
-	}
+	} */
 }
 
 /* 错误信息 */
@@ -253,13 +274,21 @@ onMounted(() => {
 		}
 
 		.el-picker-panel__content {
-			@apply m-3 w-auto;
+			@apply m-0 mx-3 w-auto;
 		}
 	}
 
-	.el-date-range-picker__header {
-		button {
-			@apply m-0 h-full text-sm;
+	.el-date-range-picker {
+		.el-date-range-picker__content {
+			@apply p-0;
+		}
+
+		.el-date-range-picker__header {
+			@apply p-0 h-7 mt-2 px-3;
+
+			button {
+				@apply m-0 h-full text-sm;
+			}
 		}
 	}
 }
