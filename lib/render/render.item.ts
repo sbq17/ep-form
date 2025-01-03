@@ -95,84 +95,84 @@ const emitsFn = <DataType extends DefaultDataType>(
  * @param slots 渲染插槽
  * @returns
  */
-const renderItem = <DataType extends DefaultDataType>(
-	formData: Partial<DataType>,
-	item: EpColumnItem<DataType>,
-	emits: SetupContext<EpItemEmitType<DataType>>['emit'],
-	slots: SetupContext['slots']
-) => {
-	let renderNode: VNode | undefined = undefined
+// const renderItem = <DataType extends DefaultDataType>(
+// 	formData: Partial<DataType>,
+// 	item: EpColumnItem<DataType>,
+// 	emits: SetupContext<EpItemEmitType<DataType>>['emit'],
+// 	slots: SetupContext['slots']
+// ) => {
+// 	let renderNode: VNode | undefined = undefined
 
-	const { prop } = item
+// 	const { prop } = item
 
-	// 自定义渲染插槽
-	const _slots = filterSlot(formData, item, slots)
+// 	// 自定义渲染插槽
+// 	const _slots = filterSlot(formData, item, slots)
 
-	const { emitBlur, emitChange, emitFocus, emitInput, emitClear, emitVisible } = emitsFn(
-		item,
-		emits
-	)
+// 	const { emitBlur, emitChange, emitFocus, emitInput, emitClear, emitVisible } = emitsFn(
+// 		item,
+// 		emits
+// 	)
 
-	const modelValue = formData[prop]
+// 	const modelValue = formData[prop]
 
-	switch (item.renderType) {
-		case 'input':
-			renderNode = h(
-				ElInput,
-				{
-					modelValue,
-					...item.inputProps,
-					onBlur: emitBlur,
-					onFocus: emitFocus,
-					onChange: emitChange,
-					onInput: emitInput,
-					onClear: emitClear
-				},
-				{ ..._slots }
-			)
-			break
+// 	switch (item.renderType) {
+// 		case 'input':
+// 			renderNode = h(
+// 				ElInput,
+// 				{
+// 					modelValue,
+// 					...item.inputProps,
+// 					onBlur: emitBlur,
+// 					onFocus: emitFocus,
+// 					onChange: emitChange,
+// 					onInput: emitInput,
+// 					onClear: emitClear
+// 				},
+// 				{ ..._slots }
+// 			)
+// 			break
 
-		case 'date':
-			renderNode = h(
-				ElDatePicker,
-				{
-					modelValue,
-					...item.dateProps,
-					'onUpdate:modelValue': emitInput,
-					onBlur: emitBlur,
-					onFocus: emitFocus,
-					onChange: emitInput,
-					onClear: emitClear,
-					onCalendarChange: emitChange,
-					onVisibleChange: emitVisible
-				},
-				{ ..._slots }
-			)
-			break
+// 		case 'date':
+// 			renderNode = h(
+// 				ElDatePicker,
+// 				{
+// 					modelValue,
+// 					...item.dateProps,
+// 					'onUpdate:modelValue': emitInput,
+// 					onBlur: emitBlur,
+// 					onFocus: emitFocus,
+// 					onChange: emitInput,
+// 					onClear: emitClear,
+// 					onCalendarChange: emitChange,
+// 					onVisibleChange: emitVisible
+// 				},
+// 				{ ..._slots }
+// 			)
+// 			break
 
-		case 'number':
-			renderNode = h(ElInputNumber, {})
-			break
+// 		case 'select':
+// 			renderNode = h(ElSelect, {})
+// 			break
 
-		case 'select':
-			renderNode = h(ElSelect, {})
-			break
+// 		case 'number':
+// 			renderNode = h(ElInputNumber, {})
+// 			break
 
-		case 'time':
-			renderNode = h(ElTimePicker, {})
-			break
+// 		case 'time':
+// 			renderNode = h(ElTimePicker, {})
+// 			break
 
-		case 'text':
-			renderNode = createTextVNode(formData[item.prop as any])
-			break
+// 		case 'text':
+// 			renderNode = createTextVNode(formData[item.prop as any])
+// 			break
 
-		default:
-			renderNode = createTextVNode('未定义renderType，无法渲染组件')
-			break
-	}
+// 		default:
+// 			renderNode = createTextVNode('未定义renderType，无法渲染组件')
+// 			break
+// 	}
 
-	return renderNode
-}
+// 	return renderNode
+// }
 
 /**
  * 渲染组件
@@ -182,7 +182,97 @@ export default defineComponent(
 		props: EpItemProps<DataType>,
 		ctx: SetupContext<EpItemEmitType<DataType>>
 	) => {
-		return () => renderItem(props.formData, props.itemConfig, ctx.emit, props.defineSlots)
+		return () => {
+			const { formData, itemConfig: item, defineSlots } = props
+			const emits = ctx.emit
+
+			let renderNode: VNode | undefined = undefined
+
+			const { prop } = item
+
+			// 自定义渲染插槽
+			const _slots = filterSlot(formData, item, defineSlots)
+
+			const { emitBlur, emitChange, emitFocus, emitInput, emitClear, emitVisible } = emitsFn(
+				item,
+				emits
+			)
+
+			const modelValue = formData[prop]
+
+			/**
+			 * 关闭popper，tooltip的标识
+			 */
+			const persistent = false
+
+			// return renderItem(props.formData, props.itemConfig, ctx.emit, props.defineSlots)
+			switch (item.renderType) {
+				case 'input':
+					renderNode = h(
+						ElInput,
+						{
+							modelValue,
+							...item.inputProps,
+							onBlur: emitBlur,
+							onFocus: emitFocus,
+							onChange: emitChange,
+							onInput: emitInput,
+							onClear: emitClear
+						},
+						{ ..._slots }
+					)
+					break
+
+				case 'date':
+					renderNode = h(
+						ElDatePicker,
+						{
+							modelValue,
+							...item.dateProps,
+							'onUpdate:modelValue': emitInput,
+							onBlur: emitBlur,
+							onFocus: emitFocus,
+							onChange: emitInput,
+							onClear: emitClear,
+							onCalendarChange: emitChange,
+							onVisibleChange: emitVisible,
+							/**
+							 * 透传 属性 销毁popper dom
+							 */
+							persistent
+						},
+						{ ..._slots }
+					)
+					break
+
+				case 'select':
+					renderNode = h(ElSelect, {
+						/**
+						 * 透传 属性 销毁popper dom
+						 */
+						persistent
+					})
+					break
+
+				case 'number':
+					renderNode = h(ElInputNumber, {})
+					break
+
+				case 'time':
+					renderNode = h(ElTimePicker, {})
+					break
+
+				case 'text':
+					renderNode = createTextVNode(formData[item.prop as any])
+					break
+
+				default:
+					renderNode = createTextVNode('未定义renderType，无法渲染组件')
+					break
+			}
+
+			return renderNode
+		}
 	},
 	{
 		name: 'EpFormItem',

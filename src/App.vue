@@ -1,5 +1,7 @@
 <template>
-	<EpForm :columns="columns" v-model="data"> </EpForm>
+	<EpForm :columns="columns" v-model="data">
+		<!-- <template #label_1-date-default=""> </template> -->
+	</EpForm>
 </template>
 
 <script lang="ts" setup>
@@ -16,31 +18,38 @@ const columns: EpColumnItem<TestProp>[] = [
 		renderType: 'input',
 		inputProps: {
 			clearable: true
-		}
-	},
-	{
-		label: 'label_3',
-		prop: 'label_3',
-		col: 12,
-		required: true,
-		renderType: 'date',
-		dateProps: {
-			type: 'datetimerange'
+		},
+		slot: {
+			append: ({}) => {
+				return '12313'
+			}
 		}
 	},
 	{
 		label: 'label_2',
 		prop: 'label_2',
+		col: 12,
+		required: true,
+		renderType: 'date',
+		dateProps: {
+			type: 'date'
+		}
+	},
+	{
+		label: 'label_3',
+		prop: 'label_3',
 		renderType: 'date',
 		dateProps: {
 			type: 'dates'
 		},
-		col: 12,
-		slot: {
-			// default: () => {
-			// 	return 'xxx'
-			// }
-		}
+		col: 12
+
+		// slot: {
+		// 	default: () => {},
+		// 	'range-separator': () => {
+		// 		return '12312'
+		// 	}
+		// }
 	},
 	{
 		label: 'label_3',

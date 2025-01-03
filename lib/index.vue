@@ -139,14 +139,18 @@ const configProvider = computed(() => ({ ...defaultConfigProvider, ...props.conf
 
 const { _onDynamicRef, formItemRef, formRef } = useFormRef()
 
-const { columnsList, errorRuleCustomList, labelCustomList, renderFormLabelErrorFn, pickFromItemProps } = useFormConfig(
-	props,
-	slots
-)
+const {
+	columnsList,
+	errorRuleCustomList,
+	labelCustomList,
+	renderFormLabelErrorFn,
+	pickFromItemProps
+} = useFormConfig(props, slots)
 
 const { renderItemSlotName } = usePickSlots<DataType>()
 
-const { emitFormData, itemBlur, itemChange, itemFocus, itemInput, itemClear } = useFormData<DataType>(props, emits)
+const { emitFormData, itemBlur, itemChange, itemFocus, itemInput, itemClear } =
+	useFormData<DataType>(props, emits)
 
 // const formData = ref<Partial<DataType>>({})
 const formData = ref<Partial<DefaultDataType>>({})
@@ -229,5 +233,34 @@ onMounted(() => {
 .ep_error_msg {
 	width: 100%;
 	color: var(--el-color-danger);
+}
+</style>
+
+<style lang="postcss">
+.ep_date_popper {
+	.el-date-picker {
+		.el-date-picker__header {
+			@apply p-0 h-7 mt-2 px-3;
+
+			.el-date-picker__prev-btn,
+			.el-date-picker__next-btn {
+				@apply h-full flex gap-1;
+
+				button {
+					@apply m-0 text-sm;
+				}
+			}
+		}
+
+		.el-picker-panel__content {
+			@apply m-3 w-auto;
+		}
+	}
+
+	.el-date-range-picker__header {
+		button {
+			@apply m-0 h-full text-sm;
+		}
+	}
 }
 </style>

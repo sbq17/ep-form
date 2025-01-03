@@ -1,5 +1,5 @@
 import type {
-	DateSlot,
+	ColumnDateSlotType,
 	DefaultSlotType,
 	InputSlot,
 	NumberSlot,
@@ -103,9 +103,7 @@ export declare type EpColumnItem<DataType extends DefaultDataType = DefaultDataT
 						FormatProps<SelectItemProps<DataType>, DataType> &
 						TransComponentSlot<SelectSlot>
 				: Type extends 'date'
-					? DateItemProps<DataType> &
-							FormatProps<DateItemProps<DataType>, DataType> &
-							TransComponentSlot<DateSlot>
+					? DateItemProps<DataType> & FormatProps<DateItemProps<DataType>, DataType>
 					: Type extends 'time'
 						? TimeItemProps<DataType> &
 								FormatProps<TimeItemProps<DataType>, DataType> &
@@ -148,6 +146,8 @@ export declare type DateItemProps<DataType = DefaultDataType> = CustomColumnItem
 	renderType: 'date'
 } & {
 	dateProps?: Partial<Omit<DatePickerProps, 'modelValue' | 'update:modelValue'> & CustomCssType>
+} & {
+	slot?: Partial<ColumnDateSlotType<DataType>>
 }
 
 /**

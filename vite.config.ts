@@ -13,7 +13,7 @@ export default defineConfig({
 		// vueDevTools(),
 		dts({
 			rollupTypes: true,
-			tsconfigPath: './tsconfig.json',
+			// tsconfigPath: './tsconfig.json',
 
 			exclude: ['./src/**/*']
 		}),

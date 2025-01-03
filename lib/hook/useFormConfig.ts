@@ -43,7 +43,8 @@ export const useFormConfig = <DataType>(
 			item.col = { ...(item.col as Partial<ColProps>), span: _col.span || 24 }
 
 			if (item.renderType === 'date') {
-				const { type, format, valueFormat, dateFormat, timeFormat } = item.dateProps || {}
+				const { type, format, valueFormat, dateFormat, timeFormat, popperClass } =
+					item.dateProps || {}
 
 				let d_format = '',
 					d_valueFormat = '',
@@ -70,7 +71,8 @@ export const useFormConfig = <DataType>(
 					format: format || d_format,
 					valueFormat: valueFormat || d_valueFormat,
 					dateFormat: dateFormat || d_dateFormat,
-					timeFormat: timeFormat || d_timeFormat
+					timeFormat: timeFormat || d_timeFormat,
+					popperClass: ' ' + ['ep_date_popper', popperClass].join(' ')
 				}
 			}
 		})

@@ -35,8 +35,6 @@ export const useFormData = <DataType extends DefaultDataType>(
 			emits('epInput', params)
 		}
 
-		console.log(params)
-
 		// 更新表单数据，通过将当前的modelValue与新的输入参数合并
 		emitFormData({ ...props.modelValue, [params.prop]: params.value } as any)
 	}
