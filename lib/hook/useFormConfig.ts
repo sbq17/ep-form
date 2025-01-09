@@ -65,6 +65,10 @@ export const useFormConfig = <DataType>(
 				} else if (type?.includes('year')) {
 					d_format = 'YYYY'
 					d_valueFormat = 'YYYY'
+				} else {
+					// 如果没添加type，默认为date
+					d_format = 'YYYY-MM-DD'
+					d_valueFormat = 'YYYY-MM-DD'
 				}
 				item.dateProps = {
 					...item.dateProps,

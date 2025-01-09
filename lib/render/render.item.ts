@@ -6,11 +6,13 @@ import type {
 	EpItemProps,
 	EpItemEmitType,
 	EpColumnItem,
-	DateDefaultSlotParams
+	DateDefaultSlotParams,
+	SlotType
 } from '../types'
-import { ElDatePicker, ElInput, ElInputNumber, ElSelect, ElTimePicker } from 'element-plus'
+import { ElDatePicker, ElInput, ElInputNumber, ElTimePicker } from 'element-plus'
 import { DateSlot, InputSlot, NumberSlot, SelectSlot } from '../constant'
 import { createTextVNode } from 'vue'
+import EpSelect from '../components/Select'
 
 /**
  * 通过 prop 和 renderType 获取指定插槽格式fn
@@ -22,8 +24,9 @@ import { createTextVNode } from 'vue'
 const filterSlot = <DataType extends DefaultDataType>(
 	formData: Partial<DataType>,
 	item: EpColumnItem<DataType>,
-	slots: SetupContext['slots']
-): SetupContext['slots'] => {
+	slots: SlotType<DataType>
+	// slots: SetupContext['slots']
+) => {
 	const { prop, renderType } = item
 	const customSlot = item.slot || {}
 
@@ -48,29 +51,38 @@ const filterSlot = <DataType extends DefaultDataType>(
 	/**
 	 * 获取可以匹配到的插槽
 	 */
-	const result = slotList.reduce<Record<string, any>>((_slots, key) => {
-		let _renderFn: any = undefined
-		if (customSlot[key as keyof typeof customSlot]) {
-			_renderFn = customSlot[key as keyof typeof customSlot]
-		} else {
-			const name = `${prop as string}-${renderType}-${key}`
-			_renderFn = slots[name]
-		}
+	// {
+	// 	_slots: EpColumnItem<DataType>['slot']
+	// 	componntSlots: EpColumnItem<DataType>['slot']
+	// }
+	const result = slotList.reduce(
+		(_merge, key) => {
+			let _renderFn: any = undefined
+			if (customSlot[key as keyof typeof customSlot]) {
+				_renderFn = customSlot[key as keyof typeof customSlot]
+			} else {
+				const name = `${prop as string}-${renderType}-${key}` as any
+				_renderFn = slots[name]
+			}
 
-		if (_renderFn) {
-			_slots[key] = (params: DateDefaultSlotParams) => {
-				console.log(params, key, renderType)
-
-				if (params) {
-					return _renderFn({ formData: formData, itemConfig: item, params })
-				} else {
-					return _renderFn({ formData: formData, itemConfig: item })
+			if (_renderFn) {
+				_merge.componntSlots[key] = _renderFn
+				_merge._slots[key] = (params: DateDefaultSlotParams) => {
+					if (params) {
+						return _renderFn({ formData: formData, itemConfig: item, params })
+					} else {
+						return _renderFn({ formData: formData, itemConfig: item })
+					}
 				}
 			}
-		}
 
-		return _slots
-	}, {})
+			return _merge
+		},
+		{ _slots: {}, componntSlots: {} } as {
+			_slots: Record<string, any>
+			componntSlots: Record<string, any>
+		}
+	)
 
 	return result
 }
@@ -86,8 +98,9 @@ const emitsFn = <DataType extends DefaultDataType>(
 			emits('itemFocus', { prop: item.prop, renderType: item.renderType, event: e }),
 		emitChange: (value: any) =>
 			emits('itemChange', { prop: item.prop, renderType: item.renderType, value }),
-		emitInput: (value: any) =>
-			emits('itemInput', { prop: item.prop, renderType: item.renderType, value }),
+		emitInput: (value: any) => {
+			emits('itemInput', { prop: item.prop, renderType: item.renderType, value })
+		},
 		emitClear: () => emits('itemClear', { prop: item.prop, renderType: item.renderType }),
 		emitVisible: (value: boolean) =>
 			emits('itemVisible', { prop: item.prop, renderType: item.renderType, visible: value })
@@ -200,7 +213,7 @@ export default defineComponent(
 			const { prop } = item
 
 			// 自定义渲染插槽
-			const _slots = filterSlot(formData, item, defineSlots)
+			const { componntSlots, _slots } = filterSlot(formData, item, defineSlots)
 
 			const { emitBlur, emitChange, emitFocus, emitInput, emitClear, emitVisible } = emitsFn(
 				item,
@@ -255,12 +268,19 @@ export default defineComponent(
 					break
 
 				case 'select':
-					renderNode = h(ElSelect, {
-						/**
-						 * 透传 属性 销毁popper dom
-						 */
-						persistent
-					})
+					renderNode = h(
+						EpSelect,
+						{
+							itemConfig: item,
+							formData,
+							onChange: emitInput,
+							/**
+							 * 透传 属性 销毁popper dom
+							 */
+							persistent
+						},
+						{ ...componntSlots }
+					)
 					break
 
 				case 'number':

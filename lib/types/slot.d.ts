@@ -3,6 +3,8 @@ import type {
 	DateItemProps,
 	DefaultDataType,
 	ErrorMsg,
+	FnOtherParams,
+	FnParams,
 	FormItemRenderComponentType,
 	InputItemProps,
 	LabelMsg,
@@ -25,7 +27,7 @@ export declare type SlotTypeTrans<
 	ColumnItem
 > = {
 	[SlotName in SlotTypeList[number] as `${keyof DataType}-${RenderType}-${SlotName}`]: (
-		params: SlotParams<DataType, ColumnItem>
+		params: FnParams<DataType, ColumnItem>
 	) => ReturnNodeType
 }
 
@@ -69,8 +71,10 @@ export declare type DateDefaultSlotParams = {
  */
 export type ColumnDateSlotType<DataType> = {
 	[K in DateSlotList[number]]: K extends 'default'
-		? (params: SlotMoreParams<DataType, DateItemProps<DataType>, DateDefaultSlotParams>) => string
-		: (params: SlotParams<DataType, DateItemProps<DataType>>) => string
+		? (
+				params: FnOtherParams<DataType, DateItemProps<DataType>, DateDefaultSlotParams>
+			) => ReturnNodeType
+		: (params: FnParams<DataType, DateItemProps<DataType>>) => ReturnNodeType
 }
 
 /**
@@ -80,9 +84,9 @@ export type SlotDateType<DataType = DefaultDataType> = {
 	[SlotName in keyof ColumnDateSlotType<DataType> as `${keyof DataType}-date-${SlotName}`]: ColumnDateSlotType<DataType>[SlotName]
 }
 
-export declare type NumberSlot = ['decrease-icon', 'increase-icon']
 export declare type SelectSlot = [
-	'default',
+	'option-default',
+	'option-group-default',
 	'header',
 	'footer',
 	'prefix',
@@ -93,12 +97,45 @@ export declare type SelectSlot = [
 ]
 
 /**
+ * select label 插槽参数
+ */
+export declare type SelectLabelSlotParams = { key?: number; label: string; value: string }
+
+/**
+ * 列配置中 select 插槽集合
+ */
+export type ColumnSelectSlotType<DataType> = {
+	[K in SelectSlot[number]]: K extends 'label'
+		? (
+				params: FnOtherParams<DataType, SelectItemProps<DataType>, SelectLabelSlotParams>
+			) => ReturnNodeType
+		: K extends 'option-default'
+			? (
+					params: FnOtherParams<DataType, SelectItemProps<DataType>, EpOptionItem<DataType>>
+				) => ReturnNodeType
+			: K extends 'option-group-default'
+				? (
+						params: FnOtherParams<DataType, SelectItemProps<DataType>, EpOptionGroup<DataType>>
+					) => ReturnNodeType
+				: (params: FnParams<DataType, SelectItemProps<DataType>>) => ReturnNodeType
+}
+
+/**
+ * slot插槽中 select 插槽参数
+ */
+export type SlotSelectType<DataType = DefaultDataType> = {
+	[SlotName in keyof ColumnSelectSlotType<DataType> as `${keyof DataType}-select-${SlotName}`]: ColumnSelectSlotType<DataType>[SlotName]
+}
+
+export declare type NumberSlot = ['decrease-icon', 'increase-icon']
+
+/**
  * 转换组件中的插槽集合来生成slot类型
  */
 export declare type TransComponentSlot<SlotList extends Array> = {
 	slot?: Partial<{
 		[Name in SlotList[number] as `${Name}`]: (
-			params: SlotParams<DataType, ColumnItem>
+			params: FnParams<DataType, ColumnItem>
 		) => ReturnNodeType
 	}>
 }
@@ -108,42 +145,8 @@ export declare type TransComponentSlot<SlotList extends Array> = {
  */
 export declare type DefaultSlotType = {
 	slot?: Partial<{
-		default: (params: SlotParams<DataType, ColumnItem>) => ReturnNodeType
+		default: (params: FnParams<DataType, ColumnItem>) => ReturnNodeType
 	}>
-}
-
-/**
- * 插槽参数
- * @description 插槽参数类型，用于传递给插槽的参数
- */
-declare type SlotParams<DataType, ColumnItem> = {
-	/**
-	 * 表单数据
-	 */
-	formData: Partial<DataType>
-	/**
-	 * 表单配置
-	 */
-	itemConfig: ColumnItem
-}
-
-/**
- * slot参数
- * @description 可能插槽存在原生组件参数
- */
-declare type SlotMoreParams<DataType, ColumnItem, OtherParams> = {
-	/**
-	 * 表单数据
-	 */
-	formData: Partial<DataType>
-	/**
-	 * 表单配置
-	 */
-	itemConfig: ColumnItem
-	/**
-	 * 表单配置
-	 */
-	params: OtherParams
 }
 
 /**
@@ -175,9 +178,10 @@ export declare type SlotType<DataType extends DefaultDataType = DefaultDataType>
 	InputItemProps<DataType>
 > &
 	SlotDateType<DataType> &
+	SlotSelectType<DataType> &
 	// SlotTypeTrans<DateSlotList, 'date', DataType, DateItemProps<DataType>> &
+	// SlotTypeTrans<SelectSlot, 'select', DataType, SelectItemProps<DataType>> &
 	SlotTypeTrans<NumberSlot, 'number', DataType, NumberItemProps<DataType>> &
-	SlotTypeTrans<SelectSlot, 'select', DataType, SelectItemProps<DataType>> &
 	SlotFormItemError<DataType> &
 	SlotFormItemLabel<DataType>
 // SlotFormItemType<DataType>

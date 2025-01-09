@@ -214,10 +214,6 @@ onMounted(() => {
 .ep_component_wrapper {
 	width: 100%;
 
-	> div {
-		/* @apply !w-full; */
-	}
-
 	::v-deep() {
 		> div {
 			@apply w-full;
@@ -238,16 +234,6 @@ onMounted(() => {
 			}
 		}
 	}
-
-	/* ::v-deep() {
-		> div {
-			@apply w-full;
-		}
-
-		.el-input__prefix {
-			@apply pr-1;
-		}
-	} */
 }
 
 /* 错误信息 */
@@ -258,6 +244,7 @@ onMounted(() => {
 </style>
 
 <style lang="postcss">
+/* 自定义date部分样式 */
 .ep_date_popper {
 	.el-date-picker {
 		.el-date-picker__header {

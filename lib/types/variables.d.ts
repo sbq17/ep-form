@@ -60,3 +60,37 @@ export declare type ErrorMsg = { error: string }
  * form item label属性
  */
 export declare type LabelMsg = { label: string }
+
+/**
+ * 参数
+ * @description 传递的参数
+ */
+export declare type FnParams<DataType, ColumnItem> = {
+	/**
+	 * 表单数据
+	 */
+	formData: Partial<DataType>
+	/**
+	 * 表单配置
+	 */
+	itemConfig: ColumnItem
+}
+
+/**
+ * 参数
+ * @description 传递的参数
+ */
+export declare type FnOtherParams<DataType, ColumnItem, OtherParams> = {
+	/**
+	 * 表单数据
+	 */
+	formData: Partial<DataType>
+	/**
+	 * 表单配置
+	 */
+	itemConfig: ColumnItem
+	/**
+	 * 其余参数
+	 */
+	params: OtherParams
+}

@@ -1,5 +1,7 @@
+import type { EpOptionGroup, EpOptionItem } from './element-plus'
 import type {
 	ColumnDateSlotType,
+	ColumnSelectSlotType,
 	DefaultSlotType,
 	InputSlot,
 	NumberSlot,
@@ -10,6 +12,7 @@ import type {
 	CustomCssType,
 	DefaultDataType,
 	ErrorMsg,
+	FnParams,
 	FormItemRenderComponentType,
 	LabelMsg,
 	PickFormItem,
@@ -136,7 +139,32 @@ export declare type InputItemProps<DataType = DefaultDataType> = CustomColumnIte
 export declare type SelectItemProps<DataType = DefaultDataType> = CustomColumnItem<DataType> & {
 	renderType: 'select'
 } & {
+	/**
+	 * select props
+	 */
 	selectProps?: Partial<Omit<ISelectProps, 'modelValue' | 'update:modelValue'> & CustomCssType>
+	/**
+	 * options value 字段
+	 */
+	optionLabel?: string | ((params: FnParams<DataType, SelectItemProps<DataType>>) => string)
+	/**
+	 * options label 字段
+	 */
+	optionValue?: string | ((params: FnParams<DataType, SelectItemProps<DataType>>) => string)
+	/**
+	 * options key 字段
+	 */
+	optionKey?: string
+	/**
+	 * el-options 配置
+	 */
+	options?: EpOptionItem<DataType>[]
+	/**
+	 * el-options 分组配置
+	 */
+	groupOptions?: EpOptionGroup<DataType>[]
+} & {
+	slot?: Partial<ColumnSelectSlotType<DataType>>
 }
 
 /**
