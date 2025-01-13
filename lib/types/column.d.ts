@@ -142,7 +142,39 @@ export declare type SelectItemProps<DataType = DefaultDataType> = CustomColumnIt
 	/**
 	 * select props
 	 */
-	selectProps?: Partial<Omit<ISelectProps, 'modelValue' | 'update:modelValue'> & CustomCssType>
+	selectProps?: Partial<
+		Omit<ISelectProps, 'modelValue' | 'update:modelValue' | 'remoteMethod'> & CustomCssType
+	> & {
+		remoteMethod?: (params: {
+			query: string
+			// fuzzySearchMode: SelectItemProps<DataType>['fuzzySearchMode'],
+			formData: Partial<DataType>
+			itemConfig: Omit<
+				SelectItemProps<DataType>,
+				'groupOptions' | 'options' | 'slot' | 'renderType'
+			>
+			/**
+			 * el-options 配置
+			 */
+			options?: EpOptionItem<DataType>[]
+			/**
+			 * el-options 分组配置
+			 */
+			groupOptions?: EpOptionGroup<DataType>[]
+		}) =>
+			| void
+			| EpOptionItem<DataType>[]
+			| EpOptionGroup<DataType>[]
+			| Promise<void | EpOptionItem<DataType>[] | EpOptionGroup<DataType>[]>
+	}
+	/**
+	 * 是否开启模糊搜索
+	 */
+	fuzzySearch?: boolean
+	/**
+	 * 模糊搜索匹配哪个字段
+	 */
+	fuzzySearchMode?: string[]
 	/**
 	 * options value 字段
 	 */

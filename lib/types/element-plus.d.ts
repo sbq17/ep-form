@@ -10,7 +10,7 @@ export declare type EpOptionItem<DataType> = {
 	/**
 	 * 选项的显示名称
 	 */
-	label?: string
+	label?: string | number
 	/**
 	 * 是否禁用该选项
 	 */
@@ -21,7 +21,7 @@ export declare type EpOptionGroup<DataType> = {
 	/**
 	 * 分组的名称
 	 */
-	label?: string
+	label?: string | number
 	/**
 	 * 是否将该分组下所有选项置为禁用
 	 */

@@ -21,6 +21,7 @@
 	},
 	"dependencies": {
 		"element-plus": "^2.8.0",
+		"lodash-es": "^4.17.21",
 		"mathjs": "^13.2.1",
 		"vue": "^3.4.38"
 	},
@@ -48,4 +49,3 @@
 		"vue-tsc": "^2.0.29"
 	}
 }
-
