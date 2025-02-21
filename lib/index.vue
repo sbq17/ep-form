@@ -152,7 +152,6 @@ const { renderItemSlotName } = usePickSlots<DataType>()
 const { emitFormData, itemBlur, itemChange, itemFocus, itemInput, itemClear } =
 	useFormData<DataType>(props, emits)
 
-// const formData = ref<Partial<DataType>>({})
 const formData = ref<Partial<DefaultDataType>>({})
 
 watch(
@@ -167,7 +166,6 @@ watch(
 	formData,
 	(nv) => {
 		emitFormData(nv as any)
-		// emits('update:modelValue', nv as any)
 	},
 	{ deep: true }
 )
@@ -177,24 +175,9 @@ defineExpose({
 	formItemRef: formItemRef as Ref<Partial<FormItemRef<DataType>>>
 })
 
-// onUpdated(() => {})
-// onBeforeUpdate(() => {})
-// onErrorCaptured(() => {})
-// onRenderTracked(() => {})
-// onRenderTriggered(() => {})
-// onActivated(() => {})
-// onDeactivated(() => {})
-// onServerPrefetch(() => {})
-
-// onBeforeMount(() => {})
-
 onMounted(() => {
 	formData.value = (props.modelValue || {}) as UnwrapRef<Partial<DefaultDataType>>
 })
-
-// onBeforeUnmount(() => {})
-
-// onUnmounted(() => {})
 </script>
 
 <style lang="postcss" scoped>
