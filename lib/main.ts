@@ -4,5 +4,7 @@ import type { EpFormProps, EpColumnItem, EpFormExpose, EpItemProps, Props } from
 
 export type { EpFormProps, EpColumnItem, EpFormExpose, EpItemProps, Props as EpProps }
 
+// export * from './types'
+
 export { EpForm }
 

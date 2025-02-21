@@ -1,7 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createTextVNode, h } from 'vue'
 import type { ColProps, FormItemContext } from 'element-plus'
-import type { ReturnNodeType, Props, ShowColumnItem, SlotType, DefaultDataType } from '../types'
+import type {
+	ReturnNodeType,
+	Props,
+	ShowColumnItem,
+	SlotType,
+	DefaultDataType,
+	EpRule
+} from '../types'
+import { cloneDeep } from 'lodash-es'
 
 /**
  * 定义表单配置
@@ -18,8 +26,10 @@ export const useFormConfig = <DataType>(
 	 * 显示表单项
 	 */
 	const columnsList = computed(() => {
+		const cloneColumns = cloneDeep(props.columns)
+
 		// 显示表单项
-		const _c = props.columns!.filter(({ show }) => (show === undefined ? true : show))
+		const _c = cloneColumns!.filter(({ show }) => (show === undefined ? true : show))
 
 		// 需要排序显示的项
 		const _order = _c.filter(({ order }) => order !== void 0)
@@ -88,9 +98,9 @@ export const useFormConfig = <DataType>(
 	 * 计算是否有自定义formItem error插槽
 	 */
 	const errorRuleCustomList = computed(() => {
-		const formRules = props.formProps!.rules || {}
+		const formRules = props.formProps!.rules || ({} as EpRule<DataType>)
 		return columnsList.value.reduce<string[]>((_merge, { required, rules, prop }) => {
-			const _rule = formRules[prop as string]
+			const _rule = formRules[prop]
 
 			if (
 				slots[`${prop as string}-error-item`] &&

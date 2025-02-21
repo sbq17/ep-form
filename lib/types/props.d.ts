@@ -32,7 +32,7 @@ export declare type Props<DataType> = {
 	/**
 	 * elForm表单配置props
 	 */
-	formProps?: Partial<EpFormProps>
+	formProps?: Partial<EpFormProps<DataType>>
 	/**
 	 * 列配置
 	 */

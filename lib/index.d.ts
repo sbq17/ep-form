@@ -18,3 +18,4 @@
 
 // export default _default
 
+export * from './types'
