@@ -1,23 +1,29 @@
 {
-	"compilerOptions": {
-		"target": "ES2020",
-		"useDefineForClassFields": true,
-		"module": "ESNext",
-		"lib": ["ES2020", "DOM", "DOM.Iterable"],
-		"skipLibCheck": true,
-
-		/* Bundler mode */
-		"moduleResolution": "bundler",
-		"allowImportingTsExtensions": true,
-		"resolveJsonModule": true,
-		"isolatedModules": true,
-		"noEmit": true,
-
-		/* Linting */
-		"strict": true,
-		"noUnusedLocals": true,
-		"noUnusedParameters": true,
-		"noFallthroughCasesInSwitch": true
-	},
-	"include": ["src", "lib/**/*", "types/vite-env.d.ts", "types/auto-imports.d.ts", "types/components.d.ts"]
+  "compilerOptions": {
+    "module": "ESNext", // 打包模块类型esnext
+    "declaration": true, // 默认不要声明文件
+    "noImplicitAny": true, // 支持类型不标准默认any
+    "removeComments": true, // 删除注释
+    "moduleResolution": "node", // 按照node模块来解析
+    "esModuleInterop": true, // 支持es6，commonjs模块
+    "jsx": "preserve", // jsx 不转
+    "noLib": false, // 不处理类库
+    "target": "es6", // 遵循es6标准
+    "sourceMap": true, // 生成sourceMap
+    "lib": [
+      "ESNext",
+      "dom"
+    ],
+    "allowSyntheticDefaultImports": true, // 允许没有导出的模块中导入
+    "experimentalDecorators": true, // 装饰器语法
+    "focusConsistnentCasingInFileNames": true, // 文件名大小写一致性
+    "resolveJsonModule": true, // 解析json模块
+    "strict": true, // 严格模式
+    "skipLibCheck": true // 跳过类库检查
+  },
+  "exclude": [ // 排除掉哪些类库
+    "node_modules",
+    "**/__test__",
+    "dist/**"
+  ]
 }
